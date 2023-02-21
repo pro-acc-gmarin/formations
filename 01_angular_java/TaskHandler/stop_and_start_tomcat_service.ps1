@@ -1,13 +1,11 @@
 Param(
-  [Parameter(Mandatory=$true, Position=0)]
-  [string]$TOMCAT_SERVICE_NAME,
-  
   [Parameter(Mandatory=$true, Position=1)]
   [string]$CONTEXT_PATH,
   
   [Parameter(Mandatory=$true, Position=2)]
   [string]$CATALINA_PATH
 )
+RefreshEnv
 
 set JPDA_ADDRESS=8000
 set JPDA_TRANSPORT=dt_socket

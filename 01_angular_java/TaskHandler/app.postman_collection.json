@@ -11,9 +11,21 @@
 			"item": [
 				{
 					"name": "GetAll",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}",
 							"host": [
@@ -29,12 +41,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}\\{{USER_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{USER_ID}}"
 							]
 						}
 					},
@@ -45,13 +57,22 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\":\"gmaupdated\",\r\n    \"lastname\":\"gmaupdated\",\r\n    \"email\":\"gmaupdated@gmaupdated.fr\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}\\{{USER_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{USER_ID}}"
 							]
 						}
 					},
@@ -62,6 +83,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\":\"gma\",\r\n    \"lastname\":\"gma\",\r\n    \"email\":\"gma@gma.fr\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}",
 							"host": [
@@ -77,12 +107,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}\\{{USER_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{USER_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{USER_ID}}"
 							]
 						}
 					},
@@ -113,12 +143,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}\\{{BOARD_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{BOARD_ID}}"
 							]
 						}
 					},
@@ -129,13 +159,22 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"TitreUpdated\",\r\n    \"description\":\"DescriptionUpdated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}\\{{BOARD_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{BOARD_ID}}"
 							]
 						}
 					},
@@ -146,6 +185,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Titre\",\r\n    \"description\":\"Description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}",
 							"host": [
@@ -161,12 +209,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}\\{{BOARD_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{BOARD_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{BOARD_ID}}"
 							]
 						}
 					},
@@ -197,12 +245,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{TASK_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{TASK_URI}}\\{{TASK_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{TASK_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{TASK_ID}}"
 							]
 						}
 					},
@@ -213,13 +261,22 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"TitreUpdated\",\r\n    \"description\":\"DescriptionUpdated\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{TASK_URI}}\\{id}",
+							"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{TASK_URI}}\\{{TASK_ID}}",
 							"host": [
 								"{{BASE_URL}}{{CONTEXT_URI}}{{TASK_URI}}"
 							],
 							"path": [
-								"{id}"
+								"{{TASK_ID}}"
 							]
 						}
 					},
@@ -257,6 +314,29 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Log in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"test\",\r\n    \"password\":\"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{CONTEXT_URI}}{{LOGIN_URI}}",
+					"host": [
+						"{{BASE_URL}}{{CONTEXT_URI}}{{LOGIN_URI}}"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

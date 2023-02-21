@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Deploy" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Users\ill_n\IdeaProjects\TaskHandler\deploy.ps1" scriptParameters="-TOMCAT_WEBAPP_PATH &quot;C:\ProgramData\Tomcat9\webapps&quot; -WAR_FILE_PATH &quot;C:\Users\ill_n\IdeaProjects\TaskHandler\target\TaskHandler.war&quot;" commandOptions="-ExecutionPolicy Bypass" workingDirectory="C:\Users\ill_n" executablePath="C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe">
+  <configuration default="false" name="Deploy" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Users\ill_n\OneDrive\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\deploy.ps1" scriptParameters="-TOMCAT_WEBAPP_PATH &quot;C:\ProgramData\Tomcat9\webapps&quot; -WAR_FILE_PATH &quot;C:\Users\ill_n\OneDrive\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\target\TaskHandler.war&quot;" commandOptions="-ExecutionPolicy Bypass" workingDirectory="C:\Users\ill_n" executablePath="C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe">
     <envs />
     <method v="2" />
   </configuration>

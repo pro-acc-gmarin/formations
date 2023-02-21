@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-database
+      author: GMARIN
+      changes:
+        - sql:
+            dbms: mysql
+            endDelimiter: ;;
+            splitStatements: true
+            sql: "CREATE DATABASE IF NOT EXISTS taskhandler;"
+  - changeSet:
+      id: 1
+      author: GMARIN
+      changes:
+        - sqlFile:
+            stripComments: true
+            path: db/scripts/1/001_create_user_table.sql
+            rollback:
+              - sqlFile:
+                  stripComments: true
+                  path: db/scripts/1/rollback/001_rollback_create_user_table.sql
+  - changeSet:
+      id: 2
+      author: GMARIN
+      changes:
+        - sqlFile:
+            stripComments: true
+            path: db/scripts/2/002_create_task_table.sql
+            rollback:
+              - sqlFile:
+                  stripComments: true
+                  path: db/scripts/2/rollback/002_rollback_create_task_table.sql
+  - changeSet:
+      id: 3
+      author: GMARIN
+      changes:
+        - sqlFile:
+            stripComments: true
+            path: db/scripts/3/003_create_board_table.sql
+            rollback:
+              - sqlFile:
+                  stripComments: true
+                  path: db/scripts/3/rollback/003_rollback_create_board_table.sql
+  - changeSet:
+      id: 4
+      author: GMARIN
+      changes:
+        - sqlFile:
+            stripComments: true
+            path: db/scripts/4/004_add_salt_column_to_user_table.sql
+            rollback:
+              - sqlFile:
+                  stripComments: true
+                  path: db/scripts/4/rollback/004_rollback_add_salt_column_to_user_table.sql

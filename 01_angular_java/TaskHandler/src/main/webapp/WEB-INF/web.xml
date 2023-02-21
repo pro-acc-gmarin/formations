@@ -31,4 +31,31 @@
     <filter-name>CorsFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
+  <listener>
+    <listener-class>gateway.InitServletContext</listener-class>
+  </listener>
+  <listener>
+    <listener-class>gateway.liquibase.LiquibaseConfiguration</listener-class>
+  </listener>
+
+  <servlet>
+    <servlet-name>UserServlet</servlet-name>
+    <servlet-class>user.application.controller.UserController</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>TaskServlet</servlet-name>
+    <servlet-class>task.application.controller.TaskController</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>BoardServlet</servlet-name>
+    <servlet-class>board.application.controller.BoardController</servlet-class>
+  </servlet>
+
+  <resource-ref>
+    <description>DB Connection</description>
+    <res-ref-name>jdbc/TaskHandlerDB</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
 </web-app>

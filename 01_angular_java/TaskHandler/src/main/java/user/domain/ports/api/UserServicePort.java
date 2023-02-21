@@ -1,19 +1,20 @@
 package user.domain.ports.api;
 
-import user.domain.User;
+import user.domain.data.User;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface UserServicePort {
 
-    User add(User user);
+    User add(User user) throws SQLException;
 
-    void delete(Long id);
+    void delete(String id);
 
-    User update(User user);
+    User update(User user, String id) throws SQLException;
 
-    List<User> getAll();
+    List<User> getAll() throws SQLException;
 
-    User getById(Long id);
+    User getById(String id);
 
 }

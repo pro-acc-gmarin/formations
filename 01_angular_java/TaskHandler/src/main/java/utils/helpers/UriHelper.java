@@ -1,24 +1,46 @@
 package utils.helpers;
 
+import utils.enumerations.UriControllerEnum;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 public class UriHelper {
 
     private static final String URI_FIRST_CHARACTER = "/";
 
-    static public Optional<String> getFirstUriPart(final String uri){
+    static public Optional<String> getUriServletPart(final String uri){
+        Optional<String> oUriServletPart = ofNullable(getUriPart(uri, 2));
+        if(oUriServletPart.isPresent()) {
+            if (Arrays.stream(UriControllerEnum.values()).anyMatch(value -> value.toString().equals(oUriServletPart.get()))) {
+                return oUriServletPart;
+            }
+        }
+        return Optional.empty();
+    }
+
+    static public Optional<String> getUriParameterPart(final String uri){
+        Optional<String> oUriParameterPart = ofNullable(getUriPart(uri, 3));
+        if(oUriParameterPart.isPresent()){
+            return oUriParameterPart;
+        }
+        return Optional.empty();
+    }
+    private static String getUriPart(final String uri, final int index){
         try {
             URI location = new URI(uri);
             String[] uriParts = location.getPath().split("/");
-            if(uriParts.length > 2){
-                return Optional.of(uriParts[2]);
+            if(uriParts.length > index){
+                return uriParts[index];
             }
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid URI", e);
         }
-        return Optional.empty();
+        return null;
     }
 
     static public URI convertStringToUri(final String segment){
