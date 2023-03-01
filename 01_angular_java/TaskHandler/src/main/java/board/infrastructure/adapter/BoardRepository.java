@@ -14,45 +14,39 @@ import java.util.Optional;
 public class BoardRepository implements BoardPersistencePort {
 
     BoardDao repository;
-    private BoardMapper mapper;
+    private final BoardMapper mapper;
 
     public BoardRepository() throws NamingException {
-        this.repository = new board.infrastructure.dao.BoardDao();
+        this.repository = new BoardDao();
         this.mapper = BoardMapper.INSTANCE;
     }
 
     @Override
-    public Board add(Board board) throws SQLException {
+    public Board add(Board board) throws SQLException, NoSuchMethodException {
         BoardPersistence boardPersistence = this.repository.add(mapper.domainToPersistence(board));
         return mapper.persistenceToDomain(boardPersistence);
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         this.repository.delete(id);
     }
 
     @Override
-    public Board update(Board board, String id) throws SQLException {
+    public Board update(Board board, String id) throws SQLException, NoSuchMethodException {
         Optional<BoardPersistence> oBoardPersistence= this.repository.update(mapper.domainToPersistence(board), id);
-        if(oBoardPersistence.isPresent()){
-            return mapper.persistenceToDomain(oBoardPersistence.get());
-        }
-        return null;
+        return oBoardPersistence.map(boardPersistence -> mapper.persistenceToDomain(boardPersistence)).orElse(null);
     }
 
     @Override
-    public List<Board> getAll() throws SQLException {
+    public List<Board> getAll() throws SQLException, NoSuchMethodException {
         List<BoardPersistence> boardPersistenceList = this.repository.getAll();
         return mapper.persistenceListToDomainList(boardPersistenceList);
     }
 
     @Override
-    public Board getById(String id) {
+    public Board getById(String id) throws SQLException, NoSuchMethodException {
         Optional<BoardPersistence> optionalTask = this.repository.getById(id);
-        if(optionalTask.isPresent()){
-            return mapper.persistenceToDomain(optionalTask.get());
-        }
-        return null;
+        return optionalTask.map(boardPersistence -> mapper.persistenceToDomain(boardPersistence)).orElse(null);
     }
 }

@@ -3,6 +3,8 @@ package board.infrastructure.dao;
 import board.infrastructure.entity.BoardPersistence;
 import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import user.infrastructure.dao.spi.IDao;
 import utils.annotations.PreparedQuery;
 import utils.helpers.ListHelper;
@@ -18,7 +20,7 @@ public class BoardDao implements IDao<BoardPersistence, String> {
 
     @Override
     @PreparedQuery("INSERT INTO board (id, id_owner, title, description, linked_tasks) VALUES (?, ?, ?, ?, ?)")
-    public BoardPersistence add(BoardPersistence boardPersistence) throws SQLException {
+    public BoardPersistence add(BoardPersistence boardPersistence) throws NoSuchMethodException, SQLException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), BoardPersistence.class), Statement.RETURN_GENERATED_KEYS);
@@ -36,13 +38,9 @@ public class BoardDao implements IDao<BoardPersistence, String> {
                 boardPersistence.setLinked_tasks(Collections.EMPTY_LIST);
                 statement.setString(5, StringUtils.EMPTY);
             }
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Updating user failed, no rows affected.");
+            if (statement.executeUpdate() == 0) {
+                throw new SQLException("Creating board failed, no rows affected.");
             }
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
         }
 
         return boardPersistence;
@@ -50,23 +48,20 @@ public class BoardDao implements IDao<BoardPersistence, String> {
 
     @Override
     @PreparedQuery("DELETE FROM board WHERE id = ?")
-    public void delete(String id) {
+    public void delete(String id) throws NoSuchMethodException, SQLException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, id);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Deleting user failed, no rows affected.");
+            if (statement.executeUpdate() == 0) {
+                throw new SQLException("Deleting board failed, no rows affected.");
             }
-        } catch (NoSuchMethodException | SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
-    @PreparedQuery("UPDATE board SET title = ?, description = ?, linked_tasks = COALESCE(? , linked_tasks) WHERE id = ?")
-    public Optional<BoardPersistence> update(BoardPersistence boardPersistence, String id) throws SQLException {
+    @PreparedQuery("UPDATE board SET title = COALESCE(?, title), description = COALESCE(?, description), linked_tasks = COALESCE(? , linked_tasks) WHERE id = ?")
+    public Optional<BoardPersistence> update(BoardPersistence boardPersistence, String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         Optional<BoardPersistence> oBoardPersistence = this.getById(id);
         if (oBoardPersistence.isPresent()) {
@@ -77,8 +72,6 @@ public class BoardDao implements IDao<BoardPersistence, String> {
                 List<String> updatedListsLinked = new ArrayList<>();
                 statement.setString(1, title);
                 statement.setString(2, description);
-                statement.setString(3, id);
-
                 Optional<List<String>> oLinkedTasks = ofNullable(boardPersistence.getLinked_tasks());
                 if (oLinkedTasks.isPresent()) {
                     updatedListsLinked.addAll(oLinkedTasks.get());
@@ -86,20 +79,14 @@ public class BoardDao implements IDao<BoardPersistence, String> {
                 } else {
                     statement.setNull(3, java.sql.Types.VARCHAR);
                 }
+                statement.setString(4, id);
 
                 int affectedRows = statement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new SQLException("Updating user failed, no rows affected.");
+                    throw new SQLException("Updating board failed, no rows affected.");
                 }
-
-                BoardPersistence updatedBoardPersistence = oBoardPersistence.get();
-                updatedBoardPersistence.setTitle(title);
-                updatedBoardPersistence.setDescription(description);
-                updatedBoardPersistence.setLinked_tasks(updatedListsLinked);
-                return of(updatedBoardPersistence);
-            } catch (NoSuchMethodException | SQLException e) {
-                throw new RuntimeException(e);
             }
+            return this.getById(id);
         } else {
             return ofNullable(this.add(boardPersistence));
         }
@@ -107,7 +94,7 @@ public class BoardDao implements IDao<BoardPersistence, String> {
 
     @Override
     @PreparedQuery("SELECT * FROM board")
-    public List<BoardPersistence> getAll() throws SQLException {
+    public List<BoardPersistence> getAll() throws NoSuchMethodException, SQLException {
         List<BoardPersistence> boardPersistenceList = new ArrayList<>();
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
@@ -122,15 +109,14 @@ public class BoardDao implements IDao<BoardPersistence, String> {
                 boardPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
                 boardPersistenceList.add(boardPersistence);
             }
-            return boardPersistenceList;
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
         }
+
+        return boardPersistenceList;
     }
 
     @Override
     @PreparedQuery("SELECT * FROM board WHERE id = ?")
-    public Optional<BoardPersistence> getById(String id) {
+    public Optional<BoardPersistence> getById(String id) throws NoSuchMethodException, SQLException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
@@ -145,8 +131,6 @@ public class BoardDao implements IDao<BoardPersistence, String> {
                 boardPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
                 return of(boardPersistence);
             }
-        } catch (NoSuchMethodException | SQLException e) {
-            throw new RuntimeException(e);
         }
         return Optional.empty();
     }

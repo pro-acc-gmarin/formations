@@ -2,6 +2,8 @@ package task.infrastructure.dao;
 
 import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import task.infrastructure.dao.spi.IDao;
 import task.infrastructure.entity.TaskPersistence;
 import utils.annotations.PreparedQuery;
@@ -19,7 +21,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
 
     @Override
     @PreparedQuery("INSERT INTO task (id, id_author, title, description, creation_date, linked_tasks) VALUES (?, ?, ?, ?, ?, ?)")
-    public TaskPersistence add(TaskPersistence taskPersistence) throws SQLException {
+    public TaskPersistence add(TaskPersistence taskPersistence) throws SQLException, NoSuchMethodException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), TaskPersistence.class), Statement.RETURN_GENERATED_KEYS);
@@ -42,33 +44,30 @@ public class TaskDao implements IDao<TaskPersistence, String> {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("Updating user failed, no rows affected.");
+                throw new SQLException("Creating task failed, no rows affected.");
             }
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
         }
+
         return taskPersistence;
     }
 
     @Override
     @PreparedQuery("DELETE FROM task WHERE id = ?")
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("Deleting user failed, no rows affected.");
+                throw new SQLException("Deleting task failed, no rows affected.");
             }
-        } catch (NoSuchMethodException | SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
-    @PreparedQuery("UPDATE task SET title = ?, description = ?, linked_tasks = COALESCE(? , linked_tasks) WHERE id = ?")
-    public Optional<TaskPersistence> update(TaskPersistence taskPersistence, String id) throws SQLException {
+    @PreparedQuery("UPDATE task SET title = COALESCE(?, title), description = COALESCE(?, description), linked_tasks = COALESCE(? , linked_tasks) WHERE id = ?")
+    public Optional<TaskPersistence> update(TaskPersistence taskPersistence, String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         Optional<TaskPersistence> oTaskPersistence = this.getById(id);
         if (oTaskPersistence.isPresent()) {
@@ -79,7 +78,6 @@ public class TaskDao implements IDao<TaskPersistence, String> {
                 List<String> updatedListsLinked = new ArrayList<>();
                 statement.setString(1, title);
                 statement.setString(2, description);
-
                 Optional<List<String>> oLinkedTasks = ofNullable(taskPersistence.getLinked_tasks());
                 if (oLinkedTasks.isPresent()) {
                     updatedListsLinked.addAll(oLinkedTasks.get());
@@ -87,21 +85,14 @@ public class TaskDao implements IDao<TaskPersistence, String> {
                 } else {
                     statement.setNull(3, java.sql.Types.VARCHAR);
                 }
-
                 statement.setString(4, id);
+
                 int affectedRows = statement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new SQLException("Updating user failed, no rows affected.");
+                    throw new SQLException("Updating task failed, no rows affected.");
                 }
-
-                TaskPersistence updatedTaskPersistence = oTaskPersistence.get();
-                updatedTaskPersistence.setTitle(title);
-                updatedTaskPersistence.setDescription(description);
-                updatedTaskPersistence.setLinked_tasks(updatedListsLinked);
-                return of(updatedTaskPersistence);
-            } catch (NoSuchMethodException | SQLException e) {
-                throw new RuntimeException(e);
             }
+            return this.getById(id);
         } else {
             return ofNullable(this.add(taskPersistence));
         }
@@ -109,7 +100,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
 
     @Override
     @PreparedQuery("SELECT * FROM task")
-    public List<TaskPersistence> getAll() throws SQLException {
+    public List<TaskPersistence> getAll() throws SQLException, NoSuchMethodException {
         List<TaskPersistence> taskPersistenceList = new ArrayList<>();
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
@@ -126,15 +117,14 @@ public class TaskDao implements IDao<TaskPersistence, String> {
 
                 taskPersistenceList.add(taskPersistence);
             }
-            return taskPersistenceList;
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
         }
+
+        return taskPersistenceList;
     }
 
     @Override
     @PreparedQuery("SELECT * FROM task WHERE id = ?")
-    public Optional<TaskPersistence> getById(String id) {
+    public Optional<TaskPersistence> getById(String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
@@ -150,9 +140,8 @@ public class TaskDao implements IDao<TaskPersistence, String> {
                 taskPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
                 return of(taskPersistence);
             }
-        } catch (NoSuchMethodException | SQLException e) {
-            throw new RuntimeException(e);
         }
+
         return Optional.empty();
     }
 

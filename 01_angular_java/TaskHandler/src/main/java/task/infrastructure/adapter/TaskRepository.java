@@ -15,7 +15,7 @@ import java.util.Optional;
 public class TaskRepository implements TaskPersistencePort {
 
     TaskDao repository;
-    private TaskMapper mapper;
+    private final TaskMapper mapper;
 
     public TaskRepository() throws NamingException {
         this.repository = new task.infrastructure.dao.TaskDao();
@@ -23,37 +23,31 @@ public class TaskRepository implements TaskPersistencePort {
     }
 
     @Override
-    public Task add(Task task) throws SQLException {
+    public Task add(Task task) throws SQLException, NoSuchMethodException {
         TaskPersistence taskPersistence = this.repository.add(mapper.domainToPersistence(task));
         return mapper.persistenceToDomain(taskPersistence);
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         this.repository.delete(id);
     }
 
     @Override
-    public Task update(Task task, String id) throws SQLException {
+    public Task update(Task task, String id) throws SQLException, NoSuchMethodException {
         Optional<TaskPersistence> oTaskPersistence= this.repository.update(mapper.domainToPersistence(task), id);
-        if(oTaskPersistence.isPresent()){
-            return mapper.persistenceToDomain(oTaskPersistence.get());
-        }
-        return null;
+        return oTaskPersistence.map(taskPersistence -> mapper.persistenceToDomain(taskPersistence)).orElse(null);
     }
 
     @Override
-    public List<Task> getAll() throws SQLException {
+    public List<Task> getAll() throws SQLException, NoSuchMethodException {
         List<TaskPersistence> taskPersistenceList = this.repository.getAll();
         return mapper.persistenceListToDomainList(taskPersistenceList);
     }
 
     @Override
-    public Task getById(String id) {
+    public Task getById(String id) throws SQLException, NoSuchMethodException {
         Optional<TaskPersistence> optionalTask = this.repository.getById(id);
-        if(optionalTask.isPresent()){
-            return mapper.persistenceToDomain(optionalTask.get());
-        }
-        return null;
+        return optionalTask.map(taskPersistence -> mapper.persistenceToDomain(taskPersistence)).orElse(null);
     }
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="log-path">${sys:catalina.base}/app-logs</Property>
+    </Properties>
+    <Appenders>
+        <File name="applicationlogs" fileName="${log-path}/applicationlogs.${date:yyyy-MM-dd}.log"
+                     filePattern="${log-path}/applicationlogs-${date:yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+        </File>
+        <File name="userlogs" fileName="${log-path}/userlogs.${date:yyyy-MM-dd}.log"
+                     filePattern="${log-path}/userlogs.${date:yyyy-MM-dd}.log.gz" ignoreExceptions="false">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Filters>
+                <MarkerFilter marker="USER_CONTROLLER" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="USER_PERSISTENCE" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </File>
+        <File name="tasklogs" fileName="${log-path}/tasklogs.${date:yyyy-MM-dd}.log"
+                     filePattern="${log-path}/tasklogs.${date:yyyy-MM-dd}.log.gz" ignoreExceptions="false">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Filters>
+                <MarkerFilter marker="TASK_CONTROLLER" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="TASK_PERSISTENCE" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </File>
+        <File name="boardlogs" fileName="${log-path}/boardlogs.${date:yyyy-MM-dd}.log"
+                     filePattern="${log-path}/boardlogs.${date:yyyy-MM-dd}.log.gz" ignoreExceptions="false">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Filters>
+                <MarkerFilter marker="BOARD_CONTROLLER" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="BOARD_PERSISTENCE" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="applicationlogs"/>
+            <AppenderRef ref="userlogs"/>
+            <AppenderRef ref="tasklogs"/>
+            <AppenderRef ref="boardlogs"/>
+        </Root>
+    </Loggers>
+</Configuration>

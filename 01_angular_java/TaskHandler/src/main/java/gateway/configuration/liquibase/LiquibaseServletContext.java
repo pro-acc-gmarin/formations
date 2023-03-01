@@ -1,7 +1,9 @@
-package gateway.liquibase;
+package gateway.configuration.liquibase;
 
 import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 import liquibase.integration.servlet.LiquibaseServletListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.sql.DataSource;
@@ -11,6 +13,9 @@ import java.sql.SQLException;
 import static java.util.Optional.ofNullable;
 
 public abstract class LiquibaseServletContext extends LiquibaseServletListener {
+
+
+    private static final Logger logger = LogManager.getLogger(LiquibaseServletContext.class);
 
     private DataSource dataSource;
     private String dataSourcePath;
@@ -25,6 +30,7 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
             // Call parent contextInitialized() method to run Liquibase
             super.contextInitialized(servletContextEvent);
         } catch (Exception e) {
+
             throw new RuntimeException("Failed to initialize Liquibase!", e);
         }
     }
@@ -32,8 +38,10 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        logger.info("Liquibase servlet context destroying - START");
         super.contextDestroyed(sce);
         AbandonedConnectionCleanupThread.checkedShutdown();
+        logger.info("Liquibase servlet context destroying - END");
     }
 
     public void setDataSource(DataSource dataSource){

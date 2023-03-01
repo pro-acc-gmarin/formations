@@ -36,7 +36,7 @@
     <listener-class>gateway.InitServletContext</listener-class>
   </listener>
   <listener>
-    <listener-class>gateway.liquibase.LiquibaseConfiguration</listener-class>
+    <listener-class>gateway.configuration.liquibase.LiquibaseConfiguration</listener-class>
   </listener>
 
   <servlet>

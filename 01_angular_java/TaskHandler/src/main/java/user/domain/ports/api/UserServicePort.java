@@ -7,14 +7,14 @@ import java.util.List;
 
 public interface UserServicePort {
 
-    User add(User user) throws SQLException;
+    User add(User user) throws SQLException, NoSuchMethodException;
 
-    void delete(String id);
+    void delete(String id) throws SQLException, NoSuchMethodException;
 
-    User update(User user, String id) throws SQLException;
+    User update(User user, String id) throws SQLException, NoSuchMethodException;
 
-    List<User> getAll() throws SQLException;
+    List<User> getAll() throws SQLException, NoSuchMethodException;
 
-    User getById(String id);
+    User getById(String id) throws SQLException, NoSuchMethodException;
 
 }

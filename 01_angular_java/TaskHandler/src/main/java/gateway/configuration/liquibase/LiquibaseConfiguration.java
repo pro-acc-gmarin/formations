@@ -1,4 +1,4 @@
-package gateway.liquibase;
+package gateway.configuration.liquibase;
 
 import gateway.configuration.DataSourceConfiguration;
 

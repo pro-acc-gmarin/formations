@@ -1,5 +1,9 @@
 package utils.helpers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import user.infrastructure.dao.UserDao;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +16,8 @@ import java.util.Random;
 
 public class PasswordHelper {
     private static final Random RANDOM = new SecureRandom();
+
+    private static final Logger LOGGER = LogManager.getLogger(PasswordHelper.class);
 
     public static class GENERATOR {
         private static final char[] ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]?".toCharArray();
@@ -68,10 +74,9 @@ public class PasswordHelper {
                 byte[] securePassword = fac.generateSecret(spec).getEncoded();
                 return Optional.of(Base64.getEncoder().encodeToString(securePassword));
 
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-                System.err.println("Exception encountered in hashPassword()");
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException exception) {
+                LoggerHelper.logError(LOGGER, LoggerHelper.SECURITY, exception);
                 return Optional.empty();
-
             } finally {
                 spec.clearPassword();
             }

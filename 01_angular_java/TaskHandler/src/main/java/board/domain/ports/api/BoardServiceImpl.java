@@ -17,23 +17,23 @@ public class BoardServiceImpl implements BoardServicePort {
         this.boardPersistencePort = boardPersistencePort;
     }
 
-    public Board add(Board board) throws SQLException {
+    public Board add(Board board) throws SQLException, NoSuchMethodException {
         return this.boardPersistencePort.add(board);
     }
 
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         this.boardPersistencePort.delete(id);
     }
 
-    public Board update(Board board, String id) throws SQLException {
-        return this.boardPersistencePort.update(board, id);
+    public Board update(Board board, String id) throws SQLException, NoSuchMethodException {
+            return this.boardPersistencePort.update(board, id);
     }
 
-    public List<Board> getAll() throws SQLException {
+    public List<Board> getAll() throws SQLException, NoSuchMethodException {
         return this.boardPersistencePort.getAll();
     }
 
-    public Board getById(String id) {
+    public Board getById(String id) throws SQLException, NoSuchMethodException {
         return this.boardPersistencePort.getById(id);
     }
 }

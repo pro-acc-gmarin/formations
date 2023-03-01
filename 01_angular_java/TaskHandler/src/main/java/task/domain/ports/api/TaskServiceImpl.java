@@ -17,23 +17,23 @@ public class TaskServiceImpl implements TaskServicePort {
         this.taskPersistencePort = taskPersistencePort;
     }
 
-    public Task add(Task task) throws SQLException {
+    public Task add(Task task) throws SQLException, NoSuchMethodException {
         return this.taskPersistencePort.add(task);
     }
 
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         this.taskPersistencePort.delete(id);
     }
 
-    public Task update(Task user, String id) throws SQLException {
+    public Task update(Task user, String id) throws SQLException, NoSuchMethodException {
         return this.taskPersistencePort.update(user, id);
     }
 
-    public List<Task> getAll() throws SQLException {
+    public List<Task> getAll() throws SQLException, NoSuchMethodException {
         return this.taskPersistencePort.getAll();
     }
 
-    public Task getById(String id) {
+    public Task getById(String id) throws SQLException, NoSuchMethodException {
         return this.taskPersistencePort.getById(id);
     }
 }

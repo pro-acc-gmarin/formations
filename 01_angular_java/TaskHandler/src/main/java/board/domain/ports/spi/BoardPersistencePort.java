@@ -8,14 +8,14 @@ import java.util.List;
 
 public interface BoardPersistencePort {
 
-    Board add(Board board) throws SQLException;
+    Board add(Board board) throws SQLException, NoSuchMethodException;
 
-    void delete(String id);
+    void delete(String id) throws SQLException, NoSuchMethodException;
 
-    Board update(Board board, String id) throws SQLException;
+    Board update(Board board, String id) throws SQLException, NoSuchMethodException;
 
-    List<Board> getAll() throws SQLException;
+    List<Board> getAll() throws SQLException, NoSuchMethodException;
 
-    Board getById(String id);
+    Board getById(String id) throws SQLException, NoSuchMethodException;
 
 }

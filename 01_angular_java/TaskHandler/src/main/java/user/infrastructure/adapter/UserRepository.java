@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserRepository implements UserPersistencePort {
 
     UserDao repository;
-    private UserMapper mapper;
+    private final UserMapper mapper;
 
     public UserRepository() throws NamingException {
         this.repository = new user.infrastructure.dao.UserDao();
@@ -22,37 +22,31 @@ public class UserRepository implements UserPersistencePort {
     }
 
     @Override
-    public User add(User user) throws SQLException {
+    public User add(User user) throws SQLException, NoSuchMethodException {
         UserPersistence userPersistence = this.repository.add(mapper.domainToPersistence(user));
         return mapper.persistenceToDomain(userPersistence);
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         this.repository.delete(id);
     }
 
     @Override
-    public User update(User user, String id) throws SQLException {
+    public User update(User user, String id) throws SQLException, NoSuchMethodException {
         Optional<UserPersistence> oUserPersistence = this.repository.update(mapper.domainToPersistence(user), id);
-        if(oUserPersistence.isPresent()){
-            return mapper.persistenceToDomain(oUserPersistence.get());
-        }
-        return null;
+        return oUserPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 
     @Override
-    public List<User> getAll() throws SQLException {
+    public List<User> getAll() throws SQLException, NoSuchMethodException {
         List<UserPersistence> userPersistenceList = this.repository.getAll();
         return mapper.persistenceListToDomainList(userPersistenceList);
     }
 
     @Override
-    public User getById(String id) {
+    public User getById(String id) throws SQLException, NoSuchMethodException {
         Optional<UserPersistence> optionalUser = this.repository.getById(id);
-        if(optionalUser.isPresent()){
-            return mapper.persistenceToDomain(optionalUser.get());
-        }
-        return null;
+        return optionalUser.map(mapper::persistenceToDomain).orElse(null);
     }
 }

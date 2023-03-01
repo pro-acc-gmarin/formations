@@ -14,23 +14,23 @@ public class UserServiceImpl implements UserServicePort{
         this.userPersistencePort = userPersistencePort;
     }
 
-    public User add(User user) throws SQLException {
+    public User add(User user) throws SQLException, NoSuchMethodException {
         return this.userPersistencePort.add(user);
     }
 
-    public void delete(String id) {
+    public void delete(String id) throws SQLException, NoSuchMethodException {
         this.userPersistencePort.delete(id);
     }
 
-    public User update(User user, String id) throws SQLException {
+    public User update(User user, String id) throws SQLException, NoSuchMethodException {
         return this.userPersistencePort.update(user, id);
     }
 
-    public List<User> getAll() throws SQLException {
+    public List<User> getAll() throws SQLException, NoSuchMethodException {
         return this.userPersistencePort.getAll();
     }
 
-    public User getById(String id) {
+    public User getById(String id) throws SQLException, NoSuchMethodException {
         return this.userPersistencePort.getById(id);
     }
 }
