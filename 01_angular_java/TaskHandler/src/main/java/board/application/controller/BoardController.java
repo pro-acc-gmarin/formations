@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
+import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 
 import javax.naming.NamingException;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -57,30 +59,28 @@ public class BoardController extends HttpServlet {
         this.processRequest(request, response);
     }
 
-    @HandleException
     private void processRequest(HttpServletRequest request, HttpServletResponse response) {
         String method = request.getMethod();
         Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
-
         if (oCurrentMethodHTTPEnum.isPresent()) {
             Optional<InBoardDto> oInBoardDto = (Optional<InBoardDto>) request.getAttribute("dto");
             Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInBoardDto, oParameter, oCurrentMethodHTTPEnum);
             } catch (IOException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_CONTROLLER, exception);
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (NoSuchMethodException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_CONTROLLER, exception);
                 response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             } catch (SQLException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_PERSISTENCE, exception);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (RecordNotFoundException exception) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         }
     }
 
-    private void dispatchAction(HttpServletResponse response, Optional<InBoardDto> oInBoardDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException {
+    @HandleException
+    private void dispatchAction(HttpServletResponse response, Optional<InBoardDto> oInBoardDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         if (oParameter.isPresent()) {
             this.dispatchActionWithParameter(response, oInBoardDto, oParameter.get(), oMethodHTTPEnum.get());
         } else {
@@ -88,13 +88,12 @@ public class BoardController extends HttpServlet {
         }
     }
 
-    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InBoardDto> oInBoardDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws IOException, SQLException, NoSuchMethodException {
+    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InBoardDto> oInBoardDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         switch (methodHTTPEnum) {
             case DELETE:
                 this.service.delete(parameter);
                 response.setStatus(HttpServletResponse.SC_FOUND);
                 LoggerHelper.logInfo(LOGGER, LoggerHelper.BOARD_CONTROLLER, String.format("Delete %s succeed.", parameter));
-
                 break;
             case PUT:
                 if (oInBoardDto.isPresent()) {
@@ -102,9 +101,8 @@ public class BoardController extends HttpServlet {
                     ResponseHelper.processResponse(response, mapper, this.service.update(requestBoard, parameter));
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LoggerHelper.logInfo(LOGGER, LoggerHelper.BOARD_CONTROLLER, String.format("Update %s succeed.", parameter));
-
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    throw new InvalidObjectException("Input datas are not valid.");
                 }
                 break;
             case GET:
@@ -114,7 +112,7 @@ public class BoardController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LoggerHelper.logInfo(LOGGER, LoggerHelper.BOARD_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    throw new RecordNotFoundException(String.format("Record with id %s was not found.", parameter));
                 }
                 break;
             default:
@@ -135,7 +133,7 @@ public class BoardController extends HttpServlet {
                     ResponseHelper.processResponse(response, mapper, this.service.add(requestBoard));
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    throw new InvalidObjectException("Input datas are not valid.");
                 }
                 break;
             default:

@@ -11,6 +11,7 @@ import user.domain.ports.api.UserServicePort;
 import user.infrastructure.adapter.UserRepository;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
+import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 
 import javax.naming.NamingException;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -62,35 +64,31 @@ public class UserController extends HttpServlet {
         String method = request.getMethod();
         Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
         if (oCurrentMethodHTTPEnum.isPresent()) {
-
             Optional<InUserDto> oInUserDto = (Optional<InUserDto>) request.getAttribute("dto");
             Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInUserDto, oParameter, oCurrentMethodHTTPEnum);
-
             } catch (IOException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_CONTROLLER, exception);
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (NoSuchMethodException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_CONTROLLER, exception);
                 response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             } catch (SQLException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_PERSISTENCE, exception);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (RecordNotFoundException exception) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         }
     }
     @HandleException
-    private void dispatchAction(HttpServletResponse response, Optional<InUserDto> oInUserDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException {
+    private void dispatchAction(HttpServletResponse response, Optional<InUserDto> oInUserDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         if (oParameter.isPresent()) {
             this.dispatchActionWithParameter(response, oInUserDto, oParameter.get(), oMethodHTTPEnum.get());
         } else {
             this.dispatchActionWithoutParameter(response, oInUserDto, oMethodHTTPEnum.get());
-            throw new IOException();
         }
     }
 
-    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InUserDto> oInUserDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException {
+    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InUserDto> oInUserDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException, RecordNotFoundException {
         switch (methodHTTPEnum) {
             case DELETE:
                 this.service.delete(parameter);
@@ -104,7 +102,7 @@ public class UserController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LoggerHelper.logInfo(LOGGER, LoggerHelper.USER_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    throw new InvalidObjectException("Input datas are not valid.");
                 }
                 break;
             case GET:
@@ -114,7 +112,7 @@ public class UserController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LoggerHelper.logInfo(LOGGER, LoggerHelper.USER_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    throw new RecordNotFoundException(String.format("Record with id %s was not found.", parameter));
                 }
                 break;
             default:
@@ -134,7 +132,7 @@ public class UserController extends HttpServlet {
                     ResponseHelper.processResponse(response, this.service.add(requestUser));
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    throw new InvalidObjectException("Input datas are not valid.");
                 }
                 break;
             default:

@@ -1,6 +1,5 @@
 package task.application.controller;
 
-import board.application.controller.BoardController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import task.application.dto.InTaskDto;
@@ -12,6 +11,7 @@ import task.domain.ports.api.TaskServicePort;
 import task.infrastructure.adapter.TaskRepository;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
+import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 
 import javax.naming.NamingException;
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -58,7 +59,6 @@ public class TaskController extends HttpServlet {
         this.processRequest(request, response);
     }
 
-    @HandleException
     private void processRequest(HttpServletRequest request, HttpServletResponse response) {
         String method = request.getMethod();
         Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
@@ -67,20 +67,20 @@ public class TaskController extends HttpServlet {
             Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInTaskDto, oParameter, oCurrentMethodHTTPEnum);
-            } catch (IOException  exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_CONTROLLER, exception);
+            } catch (IOException exception) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (NoSuchMethodException exception){
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_CONTROLLER, exception);
                 response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             } catch (SQLException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.TASK_PERSISTENCE, exception);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (RecordNotFoundException exception) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         }
     }
 
-    private void dispatchAction(HttpServletResponse response, Optional<InTaskDto> oInTaskDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws SQLException, IOException, NoSuchMethodException {
+    @HandleException
+    private void dispatchAction(HttpServletResponse response, Optional<InTaskDto> oInTaskDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws SQLException, IOException, NoSuchMethodException, RecordNotFoundException {
         if (oParameter.isPresent()) {
             this.dispatchActionWithParameter(response, oInTaskDto, oParameter.get(), oMethodHTTPEnum.get());
         } else {
@@ -88,7 +88,7 @@ public class TaskController extends HttpServlet {
         }
     }
 
-    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InTaskDto> oInTaskDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws IOException, SQLException, NoSuchMethodException {
+    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InTaskDto> oInTaskDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         switch (methodHTTPEnum) {
             case DELETE:
                 this.service.delete(parameter);
@@ -102,7 +102,7 @@ public class TaskController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LoggerHelper.logInfo(LOGGER, LoggerHelper.TASK_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    throw new InvalidObjectException("Input datas are not valid.");
                 }
                 break;
             case GET:
@@ -112,7 +112,7 @@ public class TaskController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LoggerHelper.logInfo(LOGGER, LoggerHelper.TASK_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    throw new RecordNotFoundException(String.format("Record with id %s was not found.", parameter));
                 }
                 break;
             default:
@@ -133,7 +133,7 @@ public class TaskController extends HttpServlet {
                     ResponseHelper.processResponse(response, mapper, this.service.add(requestTask));
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    throw new InvalidObjectException("Input datas are not valid.");
                 }
                 break;
             default:
