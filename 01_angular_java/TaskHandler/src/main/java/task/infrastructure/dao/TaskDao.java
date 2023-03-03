@@ -1,5 +1,6 @@
 package task.infrastructure.dao;
 
+import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
 import task.infrastructure.dao.spi.IDao;
 import task.infrastructure.entity.TaskPersistence;
@@ -7,10 +8,6 @@ import utils.annotations.PreparedQuery;
 import utils.helpers.ListHelper;
 import utils.helpers.PreparedQueryHelper;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.sql.*;
 import java.time.Instant;
 import java.util.*;
@@ -20,19 +17,11 @@ import static java.util.Optional.ofNullable;
 
 public class TaskDao implements IDao<TaskPersistence, String> {
 
-    DataSource dataSource;
-
-    public TaskDao() throws NamingException {
-        Context ctx = new InitialContext();
-        Context initCtx = (Context) ctx.lookup("java:/comp/env");
-        this.dataSource = (DataSource) initCtx.lookup("jdbc/AppTHDB");
-    }
-
     @Override
     @PreparedQuery("INSERT INTO task (id, id_author, title, description, creation_date, linked_tasks) VALUES (?, ?, ?, ?, ?, ?)")
     public TaskPersistence add(TaskPersistence taskPersistence) throws SQLException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = this.dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), TaskPersistence.class), Statement.RETURN_GENERATED_KEYS);
             taskPersistence.setId(this.generateUUID());
             taskPersistence.setId_author("current");
@@ -65,7 +54,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
     @PreparedQuery("DELETE FROM task WHERE id = ?")
     public void delete(String id) {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = this.dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, id);
             int affectedRows = statement.executeUpdate();
@@ -83,7 +72,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         Optional<TaskPersistence> oTaskPersistence = this.getById(id);
         if (oTaskPersistence.isPresent()) {
-            try (Connection connection = this.dataSource.getConnection()) {
+            try (Connection connection = ConnectionPool.getInstance().getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), TaskPersistence.class, String.class), Statement.RETURN_GENERATED_KEYS);
                 String title = taskPersistence.getTitle();
                 String description = taskPersistence.getDescription();
@@ -123,7 +112,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
     public List<TaskPersistence> getAll() throws SQLException {
         List<TaskPersistence> taskPersistenceList = new ArrayList<>();
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithoutParameter(currentMethodName, this.getClass()));
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -147,7 +136,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
     @PreparedQuery("SELECT * FROM task WHERE id = ?")
     public Optional<TaskPersistence> getById(String id) {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();

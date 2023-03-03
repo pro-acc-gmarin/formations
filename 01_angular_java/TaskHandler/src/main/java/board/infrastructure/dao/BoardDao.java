@@ -1,17 +1,13 @@
 package board.infrastructure.dao;
 
 import board.infrastructure.entity.BoardPersistence;
+import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
-import task.infrastructure.entity.TaskPersistence;
 import user.infrastructure.dao.spi.IDao;
 import utils.annotations.PreparedQuery;
 import utils.helpers.ListHelper;
 import utils.helpers.PreparedQueryHelper;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
@@ -20,19 +16,11 @@ import static java.util.Optional.ofNullable;
 
 public class BoardDao implements IDao<BoardPersistence, String> {
 
-    DataSource dataSource;
-
-    public BoardDao() throws NamingException {
-        Context ctx = new InitialContext();
-        Context initCtx = (Context) ctx.lookup("java:/comp/env");
-        this.dataSource = (DataSource) initCtx.lookup("jdbc/AppTHDB");
-    }
-
     @Override
     @PreparedQuery("INSERT INTO board (id, id_owner, title, description, linked_tasks) VALUES (?, ?, ?, ?, ?)")
     public BoardPersistence add(BoardPersistence boardPersistence) throws SQLException {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = this.dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), BoardPersistence.class), Statement.RETURN_GENERATED_KEYS);
             boardPersistence.setId(this.generateUUID());
             boardPersistence.setId_owner("current");
@@ -64,7 +52,7 @@ public class BoardDao implements IDao<BoardPersistence, String> {
     @PreparedQuery("DELETE FROM board WHERE id = ?")
     public void delete(String id) {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = this.dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, id);
             int affectedRows = statement.executeUpdate();
@@ -82,7 +70,7 @@ public class BoardDao implements IDao<BoardPersistence, String> {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         Optional<BoardPersistence> oBoardPersistence = this.getById(id);
         if (oBoardPersistence.isPresent()) {
-            try (Connection connection = this.dataSource.getConnection()) {
+            try (Connection connection = ConnectionPool.getInstance().getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), BoardPersistence.class, String.class), Statement.RETURN_GENERATED_KEYS);
                 String title = boardPersistence.getTitle();
                 String description = boardPersistence.getDescription();
@@ -122,7 +110,7 @@ public class BoardDao implements IDao<BoardPersistence, String> {
     public List<BoardPersistence> getAll() throws SQLException {
         List<BoardPersistence> boardPersistenceList = new ArrayList<>();
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithoutParameter(currentMethodName, this.getClass()));
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -144,7 +132,7 @@ public class BoardDao implements IDao<BoardPersistence, String> {
     @PreparedQuery("SELECT * FROM board WHERE id = ?")
     public Optional<BoardPersistence> getById(String id) {
         String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
