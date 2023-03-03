@@ -40,6 +40,15 @@
                 <MarkerFilter marker="BOARD_PERSISTENCE" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </File>
+        <File name="gatewayLogs" fileName="${log-path}/gatewayLogs.${date:yyyy-MM-dd}.log"
+              filePattern="${log-path}/gatewayLogs.${date:yyyy-MM-dd}.log.gz" ignoreExceptions="false">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Filters>
+                <MarkerFilter marker="GATEWAY" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </File>
     </Appenders>
     <Loggers>
         <Root level="debug">
@@ -47,6 +56,7 @@
             <AppenderRef ref="userlogs"/>
             <AppenderRef ref="tasklogs"/>
             <AppenderRef ref="boardlogs"/>
+            <AppenderRef ref="gatewayLogs"/>
         </Root>
     </Loggers>
 </Configuration>

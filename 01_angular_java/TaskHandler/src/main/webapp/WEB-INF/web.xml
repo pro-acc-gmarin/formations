@@ -38,7 +38,14 @@
   <listener>
     <listener-class>gateway.configuration.liquibase.LiquibaseConfiguration</listener-class>
   </listener>
+  <listener>
+    <listener-class>gateway.configuration.prometheus.PrometheusServletContext</listener-class>
+  </listener>
 
+  <servlet>
+    <servlet-name>PrometheusServlet</servlet-name>
+    <servlet-class>gateway.controller.PrometheusController</servlet-class>
+  </servlet>
   <servlet>
     <servlet-name>UserServlet</servlet-name>
     <servlet-class>user.application.controller.UserController</servlet-class>
@@ -51,6 +58,11 @@
     <servlet-name>BoardServlet</servlet-name>
     <servlet-class>board.application.controller.BoardController</servlet-class>
   </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PrometheusServlet</servlet-name>
+    <url-pattern>/metric</url-pattern>
+  </servlet-mapping>
 
   <resource-ref>
     <description>DB Connection</description>
