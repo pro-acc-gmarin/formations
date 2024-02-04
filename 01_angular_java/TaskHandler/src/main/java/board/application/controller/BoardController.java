@@ -4,9 +4,7 @@ import board.application.dto.InBoardDto;
 import board.application.helper.ResponseHelper;
 import board.application.mapper.BoardDtoMapper;
 import board.domain.data.Board;
-import board.domain.ports.api.BoardServiceImpl;
 import board.domain.ports.api.BoardServicePort;
-import board.infrastructure.adapter.BoardRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.annotations.HandleException;
@@ -14,7 +12,6 @@ import utils.enumerations.MethodHTTPEnum;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 
-import javax.naming.NamingException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +28,11 @@ public class BoardController extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(BoardController.class);
 
-    BoardServicePort service;
     private final BoardDtoMapper mapper;
+    private final BoardServicePort service;
 
-    public BoardController() throws NamingException {
-        this.service = new BoardServiceImpl(new BoardRepository());
+    public BoardController(final BoardServicePort service) {
+        this.service = service;
         this.mapper = BoardDtoMapper.INSTANCE;
     }
 

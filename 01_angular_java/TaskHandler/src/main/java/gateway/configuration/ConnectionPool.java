@@ -24,6 +24,10 @@ public class ConnectionPool {
         return this.datasource.getConnection();
     }
 
+    public static void closeDatasource(){
+        INSTANCE.closeDatasource();
+    }
+
     public static ConnectionPool getInstance(){
         return INSTANCE;
     }

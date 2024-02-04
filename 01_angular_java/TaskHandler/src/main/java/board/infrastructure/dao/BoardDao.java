@@ -1,6 +1,7 @@
 package board.infrastructure.dao;
 
 import board.infrastructure.entity.BoardPersistence;
+import com.zaxxer.hikari.HikariDataSource;
 import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
 import user.infrastructure.dao.spi.IDao;
@@ -16,6 +17,11 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 public class BoardDao implements IDao<BoardPersistence, String> {
+
+    private final HikariDataSource hikariDataSource;
+    public BoardDao(HikariDataSource hikariDataSource){
+        this.hikariDataSource = hikariDataSource;
+    }
 
     @Override
     @MeasurePerformance
