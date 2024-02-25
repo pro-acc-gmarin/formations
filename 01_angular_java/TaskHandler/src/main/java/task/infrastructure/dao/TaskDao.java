@@ -1,7 +1,7 @@
 package task.infrastructure.dao;
 
+import com.zaxxer.hikari.HikariDataSource;
 import common.infrastructure.spi.IDao;
-import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
 import task.infrastructure.entity.TaskPersistence;
 import utils.annotations.MeasurePerformance;
@@ -18,12 +18,18 @@ import static java.util.Optional.ofNullable;
 
 public class TaskDao implements IDao<TaskPersistence, String> {
 
+    private final HikariDataSource hikariDataSource;
+
+    public TaskDao(HikariDataSource hikariDataSource) {
+        this.hikariDataSource = hikariDataSource;
+    }
+
     @Override
     @MeasurePerformance
     @PreparedQuery("INSERT INTO task (id, id_author, title, description, creation_date, linked_tasks) VALUES (?, ?, ?, ?, ?, ?)")
     public TaskPersistence add(TaskPersistence taskPersistence) throws SQLException, NoSuchMethodException {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), TaskPersistence.class), Statement.RETURN_GENERATED_KEYS);
             taskPersistence.setId(this.generateUUID());
             taskPersistence.setId_author("current");
@@ -56,7 +62,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
     @PreparedQuery("DELETE FROM task WHERE id = ?")
     public void delete(String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, id);
             int affectedRows = statement.executeUpdate();
@@ -73,7 +79,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         Optional<TaskPersistence> oTaskPersistence = this.getById(id);
         if (oTaskPersistence.isPresent()) {
-            try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+            try (Connection connection = this.hikariDataSource.getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), TaskPersistence.class, String.class), Statement.RETURN_GENERATED_KEYS);
                 String title = taskPersistence.getTitle();
                 String description = taskPersistence.getDescription();
@@ -106,7 +112,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
     public List<TaskPersistence> getAll() throws SQLException, NoSuchMethodException {
         List<TaskPersistence> taskPersistenceList = new ArrayList<>();
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithoutParameter(currentMethodName, this.getClass()));
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -130,7 +136,7 @@ public class TaskDao implements IDao<TaskPersistence, String> {
     @PreparedQuery("SELECT * FROM task WHERE id = ?")
     public Optional<TaskPersistence> getById(String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();

@@ -4,14 +4,19 @@ import board.application.dto.InBoardDto;
 import board.application.helper.ResponseHelper;
 import board.application.mapper.BoardDtoMapper;
 import board.domain.data.Board;
+import board.domain.ports.api.BoardServiceImpl;
 import board.domain.ports.api.BoardServicePort;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.picocontainer.MutablePicoContainer;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
+import utils.helpers.ServletContextHelper;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +27,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
+import static utils.enumerations.ServletContextKey.BOARD_CONTAINER;
 
 @WebServlet(name = "BoardServlet")
 public class BoardController extends HttpServlet {
@@ -29,11 +35,18 @@ public class BoardController extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger(BoardController.class);
 
     private final BoardDtoMapper mapper;
-    private final BoardServicePort service;
+    private BoardServicePort service;
 
-    public BoardController(final BoardServicePort service) {
-        this.service = service;
+    public BoardController() {
         this.mapper = BoardDtoMapper.INSTANCE;
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        final ServletContext servletContext = getServletContext();
+        final MutablePicoContainer container = (MutablePicoContainer) ServletContextHelper.getAttribute(servletContext, BOARD_CONTAINER);
+        this.service = container.getComponent(BoardServiceImpl.class);
     }
 
     @Override

@@ -2,19 +2,21 @@ package task.application.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.picocontainer.MutablePicoContainer;
 import task.application.dto.InTaskDto;
 import task.application.helper.ResponseHelper;
 import task.application.mapper.TaskDtoMapper;
 import task.domain.data.Task;
 import task.domain.ports.api.TaskServiceImpl;
 import task.domain.ports.api.TaskServicePort;
-import task.infrastructure.adapter.TaskRepository;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
+import utils.helpers.ServletContextHelper;
 
-import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,18 +27,26 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
+import static utils.enumerations.ServletContextKey.TASK_CONTAINER;
 
 @WebServlet(name = "TaskServlet")
 public class TaskController extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(TaskController.class);
 
-    TaskServicePort service;
+    private TaskServicePort service;
     private final TaskDtoMapper mapper;
 
-    public TaskController() throws NamingException {
-        this.service = new TaskServiceImpl(new TaskRepository());
+    public TaskController() {
         this.mapper = TaskDtoMapper.INSTANCE;
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        final ServletContext servletContext = getServletContext();
+        final MutablePicoContainer container = (MutablePicoContainer) ServletContextHelper.getAttribute(servletContext, TASK_CONTAINER);
+        this.service = container.getComponent(TaskServiceImpl.class);
     }
 
     @Override

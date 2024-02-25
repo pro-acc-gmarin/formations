@@ -2,19 +2,21 @@ package user.application.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.picocontainer.MutablePicoContainer;
 import user.application.dto.InUserDto;
 import user.application.helper.ResponseHelper;
 import user.application.mapper.UserDtoMapper;
 import user.domain.data.User;
 import user.domain.ports.api.UserServiceImpl;
 import user.domain.ports.api.UserServicePort;
-import user.infrastructure.adapter.UserRepository;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
+import utils.helpers.ServletContextHelper;
 
-import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,37 +27,44 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
+import static utils.enumerations.ServletContextKey.USER_CONTAINER;
 
 @WebServlet(name = "UserServlet")
 public class UserController extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(UserController.class);
 
-    UserServicePort service;
+    private UserServicePort service;
     private final UserDtoMapper mapper;
 
-    public UserController() throws NamingException {
-        this.service = new UserServiceImpl(new UserRepository());
+    public UserController() {
         this.mapper = UserDtoMapper.INSTANCE;
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void init() throws ServletException {
+        super.init();
+        final ServletContext servletContext = getServletContext();
+        final MutablePicoContainer container = (MutablePicoContainer) ServletContextHelper.getAttribute(servletContext, USER_CONTAINER);
+        this.service = container.getComponent(UserServiceImpl.class);
+    }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response){
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response){
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response){
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         this.processRequest(request, response);
     }
 

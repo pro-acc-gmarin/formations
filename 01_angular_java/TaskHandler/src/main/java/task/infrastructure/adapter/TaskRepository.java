@@ -8,17 +8,16 @@ import task.infrastructure.mapper.TaskMapper;
 
 import javax.naming.NamingException;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class TaskRepository implements TaskPersistencePort {
 
-    TaskDao repository;
+    private final TaskDao repository;
     private final TaskMapper mapper;
 
-    public TaskRepository() throws NamingException {
-        this.repository = new task.infrastructure.dao.TaskDao();
+    public TaskRepository(final TaskDao taskDao) {
+        this.repository = taskDao;
         this.mapper = TaskMapper.INSTANCE;
     }
 
@@ -36,7 +35,7 @@ public class TaskRepository implements TaskPersistencePort {
     @Override
     public Task update(Task task, String id) throws SQLException, NoSuchMethodException {
         Optional<TaskPersistence> oTaskPersistence= this.repository.update(mapper.domainToPersistence(task), id);
-        return oTaskPersistence.map(taskPersistence -> mapper.persistenceToDomain(taskPersistence)).orElse(null);
+        return oTaskPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 
     @Override
@@ -48,6 +47,6 @@ public class TaskRepository implements TaskPersistencePort {
     @Override
     public Task getById(String id) throws SQLException, NoSuchMethodException {
         Optional<TaskPersistence> optionalTask = this.repository.getById(id);
-        return optionalTask.map(taskPersistence -> mapper.persistenceToDomain(taskPersistence)).orElse(null);
+        return optionalTask.map(mapper::persistenceToDomain).orElse(null);
     }
 }

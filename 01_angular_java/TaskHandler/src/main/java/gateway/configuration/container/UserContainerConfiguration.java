@@ -8,18 +8,20 @@ import user.domain.ports.api.UserServicePort;
 import user.domain.ports.spi.UserPersistencePort;
 import user.infrastructure.adapter.UserRepository;
 import user.infrastructure.dao.UserDao;
+import utils.helpers.ServletContextHelper;
 
 import javax.servlet.ServletContext;
+
+import static utils.enumerations.ServletContextKey.USER_CONTAINER;
 
 public class UserContainerConfiguration {
     private static final Logger logger = LogManager.getLogger(UserContainerConfiguration.class);
 
-    public static String USER_CONTAINER = "user_container";
 
     public static void configure(final MutablePicoContainer globalContainer, final ServletContext servletContext){
         MutablePicoContainer userContainer = globalContainer.makeChildContainer();
         addComponents(userContainer);
-        servletContext.setAttribute(USER_CONTAINER, userContainer);
+        ServletContextHelper.setAttribute(servletContext, USER_CONTAINER, userContainer);
         logger.info(USER_CONTAINER+ " started.");
     }
 

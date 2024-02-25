@@ -6,18 +6,17 @@ import user.infrastructure.dao.UserDao;
 import user.infrastructure.entity.UserPersistence;
 import user.infrastructure.mapper.UserMapper;
 
-import javax.naming.NamingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public class UserRepository implements UserPersistencePort {
 
-    UserDao repository;
+    final UserDao repository;
     private final UserMapper mapper;
 
-    public UserRepository() throws NamingException {
-        this.repository = new user.infrastructure.dao.UserDao();
+    public UserRepository(final UserDao userDao) {
+        this.repository = userDao;
         this.mapper = UserMapper.INSTANCE;
     }
 

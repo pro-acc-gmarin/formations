@@ -12,13 +12,13 @@ public class
 PreparedQueryHelper {
 
     static public String getPreparedQueryValueWithoutParameter(String methodName, Class enclosingClass) throws NoSuchMethodException {
-        Method currentMethod = enclosingClass.getDeclaredMethod(methodName);
+        Method currentMethod = enclosingClass.getDeclaredMethod(getNotWeavedMethodName(methodName));
         PreparedQuery annotation = currentMethod.getAnnotation(PreparedQuery.class);
         return annotation.value();
     }
 
-    static public String getPreparedQueryValueWithParameter(String methodName, Class enclosingClass, Class... parameterClass) throws NoSuchMethodException {
-        Method currentMethod = enclosingClass.getDeclaredMethod(methodName, parameterClass);
+    static public String getPreparedQueryValueWithParameter(String methodName, final Class enclosingClass, final Class... parameterClass) throws NoSuchMethodException {
+        Method currentMethod = enclosingClass.getDeclaredMethod(getNotWeavedMethodName(methodName), parameterClass);
         PreparedQuery annotation = currentMethod.getAnnotation(PreparedQuery.class);
         return annotation.value();
     }
@@ -32,6 +32,13 @@ PreparedQueryHelper {
             statement.setString(saltIndex, salt);
             statement.setString(passwordIndex, oHashPassword.get());
         }
+    }
+
+    private static String getNotWeavedMethodName(final String methodName){
+        if(methodName.contains("_")){
+            return methodName.split("_")[0];
+        }
+        return methodName;
     }
 }
 

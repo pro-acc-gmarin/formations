@@ -1,6 +1,7 @@
 package user.infrastructure.dao;
+
+import com.zaxxer.hikari.HikariDataSource;
 import common.infrastructure.spi.IDao;
-import gateway.configuration.ConnectionPool;
 import user.infrastructure.entity.UserPersistence;
 import user.infrastructure.helper.RoleEnum;
 import utils.annotations.MeasurePerformance;
@@ -17,6 +18,11 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 public class UserDao implements IDao<UserPersistence, String> {
+    private final HikariDataSource hikariDataSource;
+
+    public UserDao(HikariDataSource hikariDataSource) {
+        this.hikariDataSource = hikariDataSource;
+    }
 
     @Override
     @MeasurePerformance
@@ -24,7 +30,7 @@ public class UserDao implements IDao<UserPersistence, String> {
     public UserPersistence add(UserPersistence userPersistence) throws SQLException, NoSuchMethodException {
 
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), UserPersistence.class),  Statement.RETURN_GENERATED_KEYS);
             userPersistence.setId(this.generateUUID());
             userPersistence.setRole(RoleEnum.STANDARD.name());
@@ -48,7 +54,7 @@ public class UserDao implements IDao<UserPersistence, String> {
     @PreparedQuery("DELETE FROM user WHERE id = ?")
     public void delete(String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class),  Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, id);
             int affectedRows = statement.executeUpdate();
@@ -65,7 +71,7 @@ public class UserDao implements IDao<UserPersistence, String> {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         Optional<UserPersistence> oUserPersistence = this.getById(id);
         if(oUserPersistence.isPresent()) {
-            try(Connection connection = ConnectionPool.getInstance().getConnection()){
+            try(Connection connection = this.hikariDataSource.getConnection()){
                 PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), UserPersistence.class, String.class), Statement.RETURN_GENERATED_KEYS);
                 statement.setString(1, userPersistence.getFirstname());
                 statement.setString(2, userPersistence.getLastname());
@@ -88,7 +94,7 @@ public class UserDao implements IDao<UserPersistence, String> {
     public List<UserPersistence> getAll() throws SQLException, NoSuchMethodException {
         List<UserPersistence> userPersistenceList = new ArrayList<>();
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithoutParameter(currentMethodName, this.getClass()));
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()){
@@ -110,7 +116,7 @@ public class UserDao implements IDao<UserPersistence, String> {
     @PreparedQuery("SELECT * FROM user WHERE id = ?")
     public Optional<UserPersistence> getById(String id) throws SQLException, NoSuchMethodException {
         String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
-        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+        try (Connection connection = this.hikariDataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
             statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
