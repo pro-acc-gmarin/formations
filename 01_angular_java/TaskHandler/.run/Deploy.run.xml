@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Deploy" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\deploy.ps1" scriptParameters="-TOMCAT_WEBAPP_PATH &quot;C:\ProgramData\Tomcat9\webapps&quot; -WAR_FILE_PATH &quot;C:\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\target\TaskHandler.war&quot;" commandOptions="-ExecutionPolicy Bypass" workingDirectory="C:\Users\ill_n" executablePath="C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe">
-    <envs />
+  <configuration default="false" name="Deploy" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\deploy.ps1" scriptParameters="-TOMCAT_WEBAPP_PATH &quot;C:\apache-tomcat-9.0.86-windows-x64\apache-tomcat-9.0.86\webapps&quot; -WAR_FILE_PATH &quot;C:\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\target\TaskHandler.war&quot;" commandOptions="-ExecutionPolicy Bypass" workingDirectory="C:\Users\ill_n" executablePath="C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe">
+    <envs pass-parent-envs="false" />
     <method v="2">
       <option name="Maven.BeforeRunTask" enabled="true" file="C:\Documents\Development\Acensi\formations\01_angular_java\TaskHandler/pom.xml" goal="clean install" />
     </method>

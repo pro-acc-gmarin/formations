@@ -2,9 +2,9 @@ package board.infrastructure.dao;
 
 import board.infrastructure.entity.BoardPersistence;
 import com.zaxxer.hikari.HikariDataSource;
+import common.infrastructure.spi.IDao;
 import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
-import user.infrastructure.dao.spi.IDao;
 import utils.annotations.MeasurePerformance;
 import utils.annotations.PreparedQuery;
 import utils.helpers.ListHelper;

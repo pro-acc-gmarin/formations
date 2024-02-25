@@ -1,4 +1,4 @@
-package task.infrastructure.dao.spi;
+package common.infrastructure.spi;
 
 import java.sql.SQLException;
 import java.util.List;

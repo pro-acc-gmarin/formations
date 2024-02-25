@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Stop and Start Tomcat service" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Documents\Development\Acensi\formations\01_angular_java\TaskHandler\stop_and_start_tomcat_service.ps1" scriptParameters="-CONTEXT_PATH &quot;TaskHandler&quot; -CATALINA_PATH &quot;C:\ProgramData\chocolatey\lib\Tomcat\tools\apache-tomcat-9.0.70\bin&quot;" commandOptions="-ExecutionPolicy Bypass" workingDirectory="C:\Users\ill_n" executablePath="C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe">
-    <envs />
+    <envs pass-parent-envs="false" />
     <method v="2">
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="Deploy" run_configuration_type="PowerShellRunType" />
     </method>

@@ -16,8 +16,8 @@ public class GlobalContainerConfiguration {
     public static void configure(final ServletContext servletContext){
         final MutablePicoContainer globalContainer = new DefaultPicoContainer();
         BoardContainerConfiguration.configure(globalContainer, servletContext);
-        /*UserContainerConfiguration.configure(globalContainer, servletContext);
-        TaskContainerConfiguration.configure(globalContainer, servletContext);*/
+        UserContainerConfiguration.configure(globalContainer, servletContext);
+        TaskContainerConfiguration.configure(globalContainer, servletContext);
         globalContainer.start();
         servletContext.setAttribute(GLOBAL_CONTAINER, globalContainer);
         logger.info(GLOBAL_CONTAINER+ " started.");
@@ -25,9 +25,6 @@ public class GlobalContainerConfiguration {
 
     public static void destroy(final ServletContext servletContext){
         final MutablePicoContainer globalContainer = (MutablePicoContainer) servletContext.getAttribute(GLOBAL_CONTAINER);
-        /*BoardContainerConfiguration.destroy(servletContext);
-        UserContainerConfiguration.destroy(servletContext);
-        TaskContainerConfiguration.destroy(servletContext);*/
         globalContainer.stop();
         logger.info(GLOBAL_CONTAINER+ " stopped.");
     }

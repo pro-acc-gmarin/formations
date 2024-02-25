@@ -1,7 +1,6 @@
 package user.infrastructure.dao;
-
+import common.infrastructure.spi.IDao;
 import gateway.configuration.ConnectionPool;
-import user.infrastructure.dao.spi.IDao;
 import user.infrastructure.entity.UserPersistence;
 import user.infrastructure.helper.RoleEnum;
 import utils.annotations.MeasurePerformance;

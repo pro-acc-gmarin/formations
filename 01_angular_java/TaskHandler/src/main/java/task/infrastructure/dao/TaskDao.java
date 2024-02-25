@@ -1,8 +1,8 @@
 package task.infrastructure.dao;
 
+import common.infrastructure.spi.IDao;
 import gateway.configuration.ConnectionPool;
 import org.apache.commons.lang3.StringUtils;
-import task.infrastructure.dao.spi.IDao;
 import task.infrastructure.entity.TaskPersistence;
 import utils.annotations.MeasurePerformance;
 import utils.annotations.PreparedQuery;

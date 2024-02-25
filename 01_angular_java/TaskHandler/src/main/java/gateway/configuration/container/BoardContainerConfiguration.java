@@ -20,8 +20,7 @@ public class BoardContainerConfiguration {
 
     public static void configure(final MutablePicoContainer globalContainer, final ServletContext servletContext){
         MutablePicoContainer boardContainer = globalContainer.makeChildContainer();
-        addComponents(globalContainer);
-        //boardContainer.start();
+        addComponents(boardContainer);
         servletContext.setAttribute(BOARD_CONTAINER, boardContainer);
         logger.info(BOARD_CONTAINER+ " started.");
     }
@@ -30,12 +29,7 @@ public class BoardContainerConfiguration {
         container.addComponent(BoardPersistencePort.class, BoardRepository.class)
                 .addComponent(BoardServicePort.class, BoardServiceImpl.class)
                 .addComponent(BoardDao.class);
-        logger.info(BOARD_CONTAINER+ " components added.");
-    }
 
-    public static void destroy(final ServletContext servletContext){
-        final MutablePicoContainer boardContainer = (MutablePicoContainer) servletContext.getAttribute(BOARD_CONTAINER);
-        boardContainer.stop();
-        logger.info(BOARD_CONTAINER+ " stopped.");
+        logger.info(BOARD_CONTAINER+ " components added.");
     }
 }
