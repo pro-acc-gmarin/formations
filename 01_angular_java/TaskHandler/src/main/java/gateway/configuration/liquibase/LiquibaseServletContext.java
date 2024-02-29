@@ -25,6 +25,7 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
+            logger.info("Liquibase servlet context initializing- START");
             this.setDatasForProperties();
             this.initProperties();
             // Call parent contextInitialized() method to run Liquibase
@@ -32,6 +33,8 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
         } catch (Exception e) {
 
             throw new RuntimeException("Failed to initialize Liquibase!", e);
+        }finally {
+            logger.info("Liquibase servlet context initializing - END");
         }
     }
 

@@ -19,10 +19,11 @@ public class GlobalContainerConfiguration {
 
     public static void configure(final ServletContext servletContext){
         final MutablePicoContainer globalContainer = new DefaultPicoContainer();
+        addComponents(globalContainer, servletContext);
+
         BoardContainerConfiguration.configure(globalContainer, servletContext);
         UserContainerConfiguration.configure(globalContainer, servletContext);
         TaskContainerConfiguration.configure(globalContainer, servletContext);
-        addComponents(globalContainer, servletContext);
 
         globalContainer.start();
         ServletContextHelper.setAttribute(servletContext, GLOBAL_CONTAINER, globalContainer);
@@ -31,7 +32,6 @@ public class GlobalContainerConfiguration {
 
     private static void addComponents(final MutablePicoContainer container, final ServletContext servletContext){
         final HikariDataSource hikariDataSource = (HikariDataSource) ServletContextHelper.getAttribute(servletContext, DATASOURCE);
-        container.addComponent(HikariDataSource.class, hikariDataSource);
         container.addComponent(DataSource.class, hikariDataSource);
         logger.info(GLOBAL_CONTAINER+ " components added.");
     }

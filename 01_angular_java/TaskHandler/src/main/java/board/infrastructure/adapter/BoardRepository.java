@@ -2,9 +2,9 @@ package board.infrastructure.adapter;
 
 import board.domain.data.Board;
 import board.domain.ports.spi.BoardPersistencePort;
-import board.infrastructure.dao.BoardDao;
 import board.infrastructure.entity.BoardPersistence;
 import board.infrastructure.mapper.BoardMapper;
+import board.infrastructure.spi.BoardDaoSpi;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public class BoardRepository implements BoardPersistencePort {
 
-    final BoardDao dao;
+    final BoardDaoSpi dao;
     private final BoardMapper mapper;
 
-    public BoardRepository(final BoardDao dao) {
+    public BoardRepository(final BoardDaoSpi dao) {
         this.dao = dao;
         this.mapper = BoardMapper.INSTANCE;
     }
@@ -34,7 +34,7 @@ public class BoardRepository implements BoardPersistencePort {
     @Override
     public Board update(Board board, String id) throws SQLException, NoSuchMethodException {
         Optional<BoardPersistence> oBoardPersistence= this.dao.update(mapper.domainToPersistence(board), id);
-        return oBoardPersistence.map(boardPersistence -> mapper.persistenceToDomain(boardPersistence)).orElse(null);
+        return oBoardPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 
     @Override
@@ -46,6 +46,6 @@ public class BoardRepository implements BoardPersistencePort {
     @Override
     public Board getById(String id) throws SQLException, NoSuchMethodException {
         Optional<BoardPersistence> optionalTask = this.dao.getById(id);
-        return optionalTask.map(boardPersistence -> mapper.persistenceToDomain(boardPersistence)).orElse(null);
+        return optionalTask.map(mapper::persistenceToDomain).orElse(null);
     }
 }

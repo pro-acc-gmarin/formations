@@ -2,21 +2,20 @@ package task.infrastructure.adapter;
 
 import task.domain.data.Task;
 import task.domain.ports.spi.TaskPersistencePort;
-import task.infrastructure.dao.TaskDao;
 import task.infrastructure.entity.TaskPersistence;
 import task.infrastructure.mapper.TaskMapper;
+import task.infrastructure.spi.TaskDaoSpi;
 
-import javax.naming.NamingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public class TaskRepository implements TaskPersistencePort {
 
-    private final TaskDao repository;
+    private final TaskDaoSpi repository;
     private final TaskMapper mapper;
 
-    public TaskRepository(final TaskDao taskDao) {
+    public TaskRepository(final TaskDaoSpi taskDao) {
         this.repository = taskDao;
         this.mapper = TaskMapper.INSTANCE;
     }
@@ -34,7 +33,7 @@ public class TaskRepository implements TaskPersistencePort {
 
     @Override
     public Task update(Task task, String id) throws SQLException, NoSuchMethodException {
-        Optional<TaskPersistence> oTaskPersistence= this.repository.update(mapper.domainToPersistence(task), id);
+        Optional<TaskPersistence> oTaskPersistence = this.repository.update(mapper.domainToPersistence(task), id);
         return oTaskPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 

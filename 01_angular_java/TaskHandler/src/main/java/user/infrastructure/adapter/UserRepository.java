@@ -2,9 +2,9 @@ package user.infrastructure.adapter;
 
 import user.domain.data.User;
 import user.domain.ports.spi.UserPersistencePort;
-import user.infrastructure.dao.UserDao;
 import user.infrastructure.entity.UserPersistence;
 import user.infrastructure.mapper.UserMapper;
+import user.infrastructure.spi.UserDaoSpi;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public class UserRepository implements UserPersistencePort {
 
-    final UserDao repository;
+    final UserDaoSpi repository;
     private final UserMapper mapper;
 
-    public UserRepository(final UserDao userDao) {
+    public UserRepository(final UserDaoSpi userDao) {
         this.repository = userDao;
         this.mapper = UserMapper.INSTANCE;
     }
