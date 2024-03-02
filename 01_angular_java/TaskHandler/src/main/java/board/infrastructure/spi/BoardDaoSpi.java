@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardDaoSpi{
-    BoardPersistence add(BoardPersistence object) throws SQLException, NoSuchMethodException;
+    BoardPersistence add(final BoardPersistence object) throws SQLException, NoSuchMethodException;
 
-    void delete(String id) throws SQLException, NoSuchMethodException;
+    void delete(final String id) throws SQLException, NoSuchMethodException;
 
-    Optional<BoardPersistence> update(BoardPersistence object, String id) throws SQLException, NoSuchMethodException;
+    Optional<BoardPersistence> update(final BoardPersistence object, final String id) throws SQLException, NoSuchMethodException;
 
     List<BoardPersistence> getAll() throws SQLException, NoSuchMethodException;
 
-    Optional<BoardPersistence> getById(String id) throws SQLException, NoSuchMethodException;
+    Optional<BoardPersistence> getById(final String id) throws SQLException, NoSuchMethodException;
 }

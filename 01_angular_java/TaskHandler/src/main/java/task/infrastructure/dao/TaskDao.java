@@ -23,7 +23,7 @@ public class TaskDao implements TaskDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("INSERT INTO task (id, id_author, title, description, creation_date, linked_tasks) VALUES (?, ?, ?, ?, ?, ?)")
-    public TaskPersistence add(TaskPersistence taskPersistence) throws SQLException, NoSuchMethodException {
+    public TaskPersistence add(final TaskPersistence taskPersistence) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), TaskPersistence.class), Statement.RETURN_GENERATED_KEYS);
@@ -56,7 +56,7 @@ public class TaskDao implements TaskDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("DELETE FROM task WHERE id = ?")
-    public void delete(String id) throws SQLException, NoSuchMethodException {
+    public void delete(final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
@@ -73,7 +73,7 @@ public class TaskDao implements TaskDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("UPDATE task SET title = COALESCE(?, title), description = COALESCE(?, description), linked_tasks = COALESCE(? , linked_tasks) WHERE id = ?")
-    public Optional<TaskPersistence> update(TaskPersistence taskPersistence, String id) throws SQLException, NoSuchMethodException {
+    public Optional<TaskPersistence> update(final TaskPersistence taskPersistence, final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Optional<TaskPersistence> oTaskPersistence = this.getById(id);
         if (oTaskPersistence.isPresent()) {
@@ -132,7 +132,7 @@ public class TaskDao implements TaskDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("SELECT * FROM task WHERE id = ?")
-    public Optional<TaskPersistence> getById(String id) throws SQLException, NoSuchMethodException {
+    public Optional<TaskPersistence> getById(final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
@@ -157,8 +157,8 @@ public class TaskDao implements TaskDaoSpi {
         return UUID.randomUUID().toString();
     }
 
-    private String getMethodName(String methodName) {
-        String[] methodNameParts = methodName.split("_");
+    private String getMethodName(final String methodName) {
+        final String[] methodNameParts = methodName.split("_");
         return methodNameParts[0];
     }
 }

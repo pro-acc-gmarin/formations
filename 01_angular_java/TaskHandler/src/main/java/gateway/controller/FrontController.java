@@ -24,28 +24,28 @@ import static utils.enumerations.ServletNameEnum.*;
 public class FrontController extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     protected void processRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        String uri = request.getRequestURI();
-        Optional<String> optionalFirstUriPart = UriHelper.getUriServletPart(uri);
+        final String uri = request.getRequestURI();
+        final Optional<String> optionalFirstUriPart = UriHelper.getUriServletPart(uri);
         optionalFirstUriPart.ifPresent(firstPartUri -> {
             try {
                 this.dispatchToServlet(request, response, firstPartUri, uri);
@@ -56,9 +56,9 @@ public class FrontController extends HttpServlet {
     }
 
     private void dispatchToServlet(final HttpServletRequest request, final HttpServletResponse response, final String firstUriPart, final String uri) throws IOException {
-        Optional<UriControllerEnum> oCurrentUriControllerEnum = UriControllerEnum.fromString(firstUriPart.toUpperCase());
+        final Optional<UriControllerEnum> oCurrentUriControllerEnum = UriControllerEnum.fromString(firstUriPart.toUpperCase());
         if (oCurrentUriControllerEnum.isPresent()) {
-            UriControllerEnum currentUriControllerEnum = oCurrentUriControllerEnum.get();
+            final UriControllerEnum currentUriControllerEnum = oCurrentUriControllerEnum.get();
             try {
                 switch (currentUriControllerEnum) {
                     case USER:
@@ -93,7 +93,7 @@ public class FrontController extends HttpServlet {
     }
 
     private void forwardToServlet(final HttpServletRequest request, final HttpServletResponse response, final String servletName) throws IOException, ServletException {
-        RequestDispatcher requestDispatcher = request.getServletContext().getNamedDispatcher(servletName);
+        final RequestDispatcher requestDispatcher = request.getServletContext().getNamedDispatcher(servletName);
         requestDispatcher.forward(request, response);
     }
 }

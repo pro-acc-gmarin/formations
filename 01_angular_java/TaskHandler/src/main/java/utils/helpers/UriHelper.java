@@ -14,7 +14,7 @@ public class UriHelper {
     private static final String URI_FIRST_CHARACTER = "/";
 
     static public Optional<String> getUriServletPart(final String uri){
-        Optional<String> oUriServletPart = ofNullable(getUriPart(uri, 2));
+        final Optional<String> oUriServletPart = ofNullable(getUriPart(uri, 2));
         if(oUriServletPart.isPresent()) {
             if (Arrays.stream(UriControllerEnum.values()).anyMatch(value -> value.toString().equals(oUriServletPart.get()))) {
                 return oUriServletPart;
@@ -24,7 +24,7 @@ public class UriHelper {
     }
 
     static public Optional<String> getUriParameterPart(final String uri){
-        Optional<String> oUriParameterPart = ofNullable(getUriPart(uri, 3));
+        final Optional<String> oUriParameterPart = ofNullable(getUriPart(uri, 3));
         if(oUriParameterPart.isPresent()){
             return oUriParameterPart;
         }
@@ -32,8 +32,8 @@ public class UriHelper {
     }
     private static String getUriPart(final String uri, final int index){
         try {
-            URI location = new URI(uri);
-            String[] uriParts = location.getPath().split("/");
+            final URI location = new URI(uri);
+            final String[] uriParts = location.getPath().split("/");
             if(uriParts.length > index){
                 return uriParts[index];
             }

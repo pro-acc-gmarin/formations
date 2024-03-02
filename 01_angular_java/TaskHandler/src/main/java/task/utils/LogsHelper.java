@@ -8,11 +8,10 @@ import utils.helpers.LoggerHelper;
 public class LogsHelper {
     private static final Logger LOGGER = LoggerHelper.getLogger(LoggerNameEnum.TASK);
 
-
     public static void info(final Marker marker, final String message){
         LoggerHelper.logInfo(LOGGER, marker, message);
     }
-    public static void error( Marker marker, Throwable exception){
+    public static void error( final Marker marker, final Throwable exception){
         LoggerHelper.logError(LOGGER, marker, exception);
     }
 }

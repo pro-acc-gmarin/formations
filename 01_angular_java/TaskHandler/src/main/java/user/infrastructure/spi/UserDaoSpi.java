@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserDaoSpi {
-    UserPersistence add(UserPersistence object) throws SQLException, NoSuchMethodException;
+    UserPersistence add(final UserPersistence object) throws SQLException, NoSuchMethodException;
 
-    void delete(String id) throws SQLException, NoSuchMethodException;
+    void delete(final String id) throws SQLException, NoSuchMethodException;
 
-    Optional<UserPersistence> update(UserPersistence object, String id) throws SQLException, NoSuchMethodException;
+    Optional<UserPersistence> update(final UserPersistence object, final String id) throws SQLException, NoSuchMethodException;
 
     List<UserPersistence> getAll() throws SQLException, NoSuchMethodException;
 
-    Optional<UserPersistence> getById(String id) throws SQLException, NoSuchMethodException;
+    Optional<UserPersistence> getById(final String id) throws SQLException, NoSuchMethodException;
 }

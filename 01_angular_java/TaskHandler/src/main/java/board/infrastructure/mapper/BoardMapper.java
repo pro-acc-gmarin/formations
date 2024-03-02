@@ -13,7 +13,7 @@ import java.util.List;
 public interface BoardMapper {
     BoardMapper INSTANCE = Mappers.getMapper(BoardMapper.class);
 
-    Board persistenceToDomain(BoardPersistence persistence);
-    BoardPersistence domainToPersistence(Board domain);
-    List<Board> persistenceListToDomainList(List<BoardPersistence> persistenceList);
+    Board persistenceToDomain(final BoardPersistence persistence);
+    BoardPersistence domainToPersistence(final Board domain);
+    List<Board> persistenceListToDomainList(final List<BoardPersistence> persistenceList);
 }

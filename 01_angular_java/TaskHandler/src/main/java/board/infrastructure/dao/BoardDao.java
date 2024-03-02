@@ -22,7 +22,7 @@ public class BoardDao implements BoardDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("INSERT INTO board (id, id_owner, title, description, linked_tasks) VALUES (?, ?, ?, ?, ?)")
-    public BoardPersistence add(BoardPersistence boardPersistence) throws NoSuchMethodException, SQLException {
+    public BoardPersistence add(final BoardPersistence boardPersistence) throws NoSuchMethodException, SQLException {
         final String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), BoardPersistence.class), Statement.RETURN_GENERATED_KEYS);
@@ -65,7 +65,7 @@ public class BoardDao implements BoardDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("UPDATE board SET title = COALESCE(?, title), description = COALESCE(?, description), linked_tasks = COALESCE(? , linked_tasks) WHERE id = ?")
-    public Optional<BoardPersistence> update(final BoardPersistence boardPersistence, String id) throws SQLException, NoSuchMethodException {
+    public Optional<BoardPersistence> update(final BoardPersistence boardPersistence, final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Optional<BoardPersistence> oBoardPersistence = this.getById(id);
         if (oBoardPersistence.isPresent()) {

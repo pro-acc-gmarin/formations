@@ -17,7 +17,7 @@ public class LogsHelper {
         LoggerHelper.logInfo(LOGGER, message);
     }
 
-    public static void error( Marker marker, Throwable exception){
+    public static void error(final Marker marker, final Throwable exception){
         LoggerHelper.logError(LOGGER, marker, exception);
     }
 }

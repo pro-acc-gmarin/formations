@@ -12,17 +12,17 @@ import java.util.List;
 
 @WebServlet(name="LoginServlet",urlPatterns={"/login"})
 public class LoginController extends HttpServlet {
-    String USERNAME="test";
-    String PASSWORD="test";
+    private final String USERNAME="test";
+    private final String PASSWORD="test";
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        boolean isAuthenticated = USERNAME.equals(username) && PASSWORD.equals(password);
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        final String username = request.getParameter("username");
+        final String password = request.getParameter("password");
+        final boolean isAuthenticated = USERNAME.equals(username) && PASSWORD.equals(password);
 
         if(isAuthenticated){
-            HttpSession session = request.getSession(true);
+            final HttpSession session = request.getSession(true);
             session.setAttribute("username", username);
         }
 

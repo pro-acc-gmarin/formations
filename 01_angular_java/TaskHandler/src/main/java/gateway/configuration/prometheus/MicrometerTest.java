@@ -11,7 +11,7 @@ import utils.metric.PrometheusMetricRegistry;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MicrometerTest {
-    private PrometheusMeterRegistry registry = PrometheusMetricRegistry.getInstance().getRegistry();
+    private final PrometheusMeterRegistry registry = PrometheusMetricRegistry.getInstance().getRegistry();
 
     @Test
     public void test_metrics(){

@@ -12,9 +12,9 @@ import static java.util.Optional.ofNullable;
 
 public class RequestHelper {
 
-    static public Optional<Object> getDtoFromRequestBody(HttpServletRequest request, Class dtoClass) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper(); // jackson
-        String payload = getRequestBody(request);
+    static public Optional<Object> getDtoFromRequestBody(final HttpServletRequest request, final Class dtoClass) throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper(); // jackson
+        final String payload = getRequestBody(request);
         if(payload.isEmpty()){
             return Optional.empty();
         }else{
@@ -22,10 +22,10 @@ public class RequestHelper {
         }
     }
 
-    static public String getRequestBody(HttpServletRequest request) throws IOException {
+    static public String getRequestBody(final HttpServletRequest request) throws IOException {
         String line;
-        BufferedReader bufferedReader = request.getReader();
-        StringBuilder stringBuilder = new StringBuilder();
+        final BufferedReader bufferedReader = request.getReader();
+        final StringBuilder stringBuilder = new StringBuilder();
         while ((line = bufferedReader.readLine()) != null) {
             stringBuilder.append(line);
         }

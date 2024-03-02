@@ -8,19 +8,19 @@ public class RecordNotFoundException extends Exception {
         super();
     }
 
-    public RecordNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public RecordNotFoundException(final String message, Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public RecordNotFoundException(String message, Throwable cause) {
+    public RecordNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public RecordNotFoundException(String message) {
+    public RecordNotFoundException(final String message) {
         super(message);
     }
 
-    public RecordNotFoundException(Throwable cause) {
+    public RecordNotFoundException(final Throwable cause) {
         super(cause);
     }
 

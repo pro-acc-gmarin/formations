@@ -19,7 +19,7 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
     private String password;
 
     @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
+    public void contextInitialized(final ServletContextEvent servletContextEvent) {
         try {
             LogsHelper.info("Liquibase servlet context initializing- START");
             this.setDatasForProperties();
@@ -36,32 +36,32 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
 
 
     @Override
-    public void contextDestroyed(ServletContextEvent sce) {
+    public void contextDestroyed(final ServletContextEvent sce) {
         LogsHelper.info("Liquibase servlet context destroying - START");
         super.contextDestroyed(sce);
         AbandonedConnectionCleanupThread.checkedShutdown();
         LogsHelper.info("Liquibase servlet context destroying - END");
     }
 
-    public void setDataSource(DataSource dataSource){
+    public void setDataSource(final DataSource dataSource){
         this.dataSource = dataSource;
     }
 
-    public void setPassword(String password){
+    public void setPassword(final String password){
         this.password = password;
     }
 
-    public void setDataSourcePath(String dataSourcePath){
+    public void setDataSourcePath(final String dataSourcePath){
         this.dataSourcePath = dataSourcePath;
     }
 
-    public void setChangeLogPath(String changeLogPath){
+    public void setChangeLogPath(final String changeLogPath){
         this.changeLogPath = changeLogPath;
     }
 
     private void initProperties() throws SQLException {
         if(ofNullable(this.dataSource).isPresent()) {
-            DatabaseMetaData databaseMetaData = this.dataSource.getConnection().getMetaData();
+            final DatabaseMetaData databaseMetaData = this.dataSource.getConnection().getMetaData();
             System.setProperty("liquibase.driver", databaseMetaData.getDriverName());
             System.setProperty("liquibase.url", databaseMetaData.getURL());
             System.setProperty("liquibase.username", databaseMetaData.getUserName());

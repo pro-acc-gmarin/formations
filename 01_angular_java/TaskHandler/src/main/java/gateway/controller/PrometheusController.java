@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PrometheusController extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("text/plain");
         response.getWriter().write(PrometheusMetricRegistry.getInstance().getRegistry().scrape());

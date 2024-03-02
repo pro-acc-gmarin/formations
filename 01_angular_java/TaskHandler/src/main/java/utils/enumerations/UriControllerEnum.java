@@ -10,11 +10,11 @@ public enum UriControllerEnum {
     LOGIN("login");
 
     private final String label;
-    UriControllerEnum(String label) {
+    UriControllerEnum(final String label) {
         this.label = label;
     }
 
-    public static Optional<UriControllerEnum> fromString(String value){
+    public static Optional<UriControllerEnum> fromString(final String value){
         return Arrays.stream(values()).filter(currentEnum -> currentEnum.name().equals(value)).findFirst();
     }
 

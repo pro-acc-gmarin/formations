@@ -14,8 +14,8 @@ import java.sql.SQLException;
 public class LoggingAspect {
 
     @AfterThrowing(pointcut = "execution(* board.application.controller.BoardController.dispatchAction(..)) && @annotation(utils.annotations.HandleException)", throwing = "exception")
-    public void logBoardException(JoinPoint joinPoint, Throwable exception) {
-        HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[0];
+    public void logBoardException(final JoinPoint joinPoint, final Throwable exception) {
+        final HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[0];
         if (exception instanceof IOException || exception instanceof NoSuchMethodException) {
             LogsHelper.error(LoggerHelper.BOARD_CONTROLLER, exception);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -26,8 +26,8 @@ public class LoggingAspect {
     }
 
     @AfterThrowing(pointcut = "execution(* user.application.controller.UserController.dispatchAction(..)) && @annotation(utils.annotations.HandleException)", throwing = "exception")
-    public void logUserException(JoinPoint joinPoint, Throwable exception) {
-        HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[0];
+    public void logUserException(final JoinPoint joinPoint, final Throwable exception) {
+        final HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[0];
         if (exception instanceof IOException || exception instanceof NoSuchMethodException) {
             LogsHelper.error(LoggerHelper.USER_CONTROLLER, exception);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -38,8 +38,8 @@ public class LoggingAspect {
     }
 
     @AfterThrowing(pointcut = "execution(* task.application.controller.TaskController.dispatchAction(..)) && @annotation(utils.annotations.HandleException)", throwing = "exception")
-    public void logTaskException(JoinPoint joinPoint, Throwable exception) {
-        HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[0];
+    public void logTaskException(final JoinPoint joinPoint, final Throwable exception) {
+        final HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[0];
         if (exception instanceof IOException || exception instanceof NoSuchMethodException) {
             LogsHelper.error(LoggerHelper.TASK_CONTROLLER, exception);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

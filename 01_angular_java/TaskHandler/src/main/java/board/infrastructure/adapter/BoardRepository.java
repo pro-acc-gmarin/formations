@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class BoardRepository implements BoardPersistencePort {
 
-    final BoardDaoSpi dao;
+    private final BoardDaoSpi dao;
     private final BoardMapper mapper;
 
     public BoardRepository(final BoardDaoSpi dao) {
@@ -21,31 +21,31 @@ public class BoardRepository implements BoardPersistencePort {
     }
 
     @Override
-    public Board add(Board board) throws SQLException, NoSuchMethodException {
-        BoardPersistence boardPersistence = this.dao.add(mapper.domainToPersistence(board));
+    public Board add(final Board board) throws SQLException, NoSuchMethodException {
+        final BoardPersistence boardPersistence = this.dao.add(mapper.domainToPersistence(board));
         return mapper.persistenceToDomain(boardPersistence);
     }
 
     @Override
-    public void delete(String id) throws SQLException, NoSuchMethodException {
+    public void delete(final String id) throws SQLException, NoSuchMethodException {
         this.dao.delete(id);
     }
 
     @Override
-    public Board update(Board board, String id) throws SQLException, NoSuchMethodException {
-        Optional<BoardPersistence> oBoardPersistence= this.dao.update(mapper.domainToPersistence(board), id);
+    public Board update(final Board board, final String id) throws SQLException, NoSuchMethodException {
+        final Optional<BoardPersistence> oBoardPersistence= this.dao.update(mapper.domainToPersistence(board), id);
         return oBoardPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 
     @Override
     public List<Board> getAll() throws SQLException, NoSuchMethodException {
-        List<BoardPersistence> boardPersistenceList = this.dao.getAll();
+        final List<BoardPersistence> boardPersistenceList = this.dao.getAll();
         return mapper.persistenceListToDomainList(boardPersistenceList);
     }
 
     @Override
-    public Board getById(String id) throws SQLException, NoSuchMethodException {
-        Optional<BoardPersistence> optionalTask = this.dao.getById(id);
+    public Board getById(final String id) throws SQLException, NoSuchMethodException {
+        final Optional<BoardPersistence> optionalTask = this.dao.getById(id);
         return optionalTask.map(mapper::persistenceToDomain).orElse(null);
     }
 }

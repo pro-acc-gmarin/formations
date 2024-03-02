@@ -46,32 +46,32 @@ public class UserController extends HttpServlet {
         this.service = container.getComponent(UserServiceImpl.class);
     }
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response){
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response){
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response){
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response){
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response){
+    protected void doPut(final HttpServletRequest request, final HttpServletResponse response){
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) {
-        String method = request.getMethod();
-        Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
+    private void processRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        final String method = request.getMethod();
+        final Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
         if (oCurrentMethodHTTPEnum.isPresent()) {
-            Optional<InUserDto> oInUserDto = (Optional<InUserDto>) request.getAttribute("dto");
-            Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
+            final Optional<InUserDto> oInUserDto = (Optional<InUserDto>) request.getAttribute("dto");
+            final Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInUserDto, oParameter, oCurrentMethodHTTPEnum);
             } catch (IOException exception) {
@@ -86,7 +86,7 @@ public class UserController extends HttpServlet {
         }
     }
     @HandleException
-    private void dispatchAction(HttpServletResponse response, Optional<InUserDto> oInUserDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
+    private void dispatchAction(final HttpServletResponse response, final Optional<InUserDto> oInUserDto, final Optional<String> oParameter, final Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         if (oParameter.isPresent()) {
             this.dispatchActionWithParameter(response, oInUserDto, oParameter.get(), oMethodHTTPEnum.get());
         } else {
@@ -94,7 +94,7 @@ public class UserController extends HttpServlet {
         }
     }
 
-    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InUserDto> oInUserDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException, RecordNotFoundException {
+    private void dispatchActionWithParameter(final HttpServletResponse response, final Optional<InUserDto> oInUserDto, final String parameter, final MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException, RecordNotFoundException {
         switch (methodHTTPEnum) {
             case DELETE:
                 this.service.delete(parameter);
@@ -103,7 +103,7 @@ public class UserController extends HttpServlet {
                 break;
             case PUT:
                 if (oInUserDto.isPresent()) {
-                    User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
+                    final User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
                     ResponseHelper.processResponse(response, this.service.update(requestUser, parameter));
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.USER_CONTROLLER, String.format("Update %s succeed.", parameter));
@@ -112,7 +112,7 @@ public class UserController extends HttpServlet {
                 }
                 break;
             case GET:
-                Optional<User> oUser = ofNullable(this.service.getById(parameter));
+                final Optional<User> oUser = ofNullable(this.service.getById(parameter));
                 if (oUser.isPresent()) {
                     ResponseHelper.processResponse(response, oUser.get());
                     response.setStatus(HttpServletResponse.SC_FOUND);
@@ -126,7 +126,7 @@ public class UserController extends HttpServlet {
         }
     }
 
-    private void dispatchActionWithoutParameter(HttpServletResponse response, Optional<InUserDto> oInUserDto, MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException {
+    private void dispatchActionWithoutParameter(final HttpServletResponse response, final Optional<InUserDto> oInUserDto, final MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException {
         switch (methodHTTPEnum) {
             case GET:
                 ResponseHelper.processResponse(response, this.service.getAll());
@@ -134,7 +134,7 @@ public class UserController extends HttpServlet {
                 break;
             case POST:
                 if (oInUserDto.isPresent()) {
-                    User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
+                    final User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
                     ResponseHelper.processResponse(response, this.service.add(requestUser));
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {

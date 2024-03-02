@@ -11,11 +11,11 @@ public enum MethodHTTPEnum {
     PUT("put");
 
     private final String label;
-    MethodHTTPEnum(String label) {
+    MethodHTTPEnum(final String label) {
         this.label = label;
     }
 
-    public static Optional<MethodHTTPEnum> fromString(String value){
+    public static Optional<MethodHTTPEnum> fromString(final String value){
         return Arrays.stream(values()).filter(currentEnum -> currentEnum.name().equals(value)).findFirst();
     }
 

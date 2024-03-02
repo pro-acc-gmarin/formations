@@ -34,19 +34,19 @@ public class LoggerHelper {
         return LoggerFactory.getLogger(loggerNameEnum.name());
     }
 
-    static public void logError(Logger LOGGER, Marker marker, Throwable exception){
+    static public void logError(final Logger LOGGER, final Marker marker, final Throwable exception){
         LOGGER.error(marker, exception.getMessage(), exception);
     }
 
-    static public void logDebug(Logger LOGGER, Marker marker, Exception exception){
+    static public void logDebug(final Logger LOGGER, final Marker marker, final Exception exception){
         LOGGER.debug(marker, exception.getMessage(), exception);
     }
 
-    static public void logInfo(Logger LOGGER, Marker marker, String message){
+    static public void logInfo(final Logger LOGGER, final Marker marker, final String message){
         LOGGER.info(marker, message);
     }
 
-    static public void logInfo(Logger LOGGER, String message){
+    static public void logInfo(final Logger LOGGER, final String message){
         LOGGER.info(message);
     }
 }

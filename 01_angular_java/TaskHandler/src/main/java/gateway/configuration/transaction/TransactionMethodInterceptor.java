@@ -13,21 +13,21 @@ public class TransactionMethodInterceptor implements InvocationHandler {
     private final Object target;
     private final DataSource dataSource;
 
-    public TransactionMethodInterceptor(final Object target, final DataSource dataSource){
+    public TransactionMethodInterceptor(final Object target, final DataSource dataSource) {
         this.target = target;
         this.dataSource = dataSource;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         LogsHelper.info("Dao Method Interceptor - Start");
-       final Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+        final Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
         if (targetMethod.isAnnotationPresent(Transactional.class)) {
-            Connection connection = dataSource.getConnection();
+            final Connection connection = dataSource.getConnection();
             TransactionManager.setConnection(connection);
             try {
                 connection.setAutoCommit(false);
-                Object result = method.invoke(target, args);
+                final Object result = method.invoke(target, args);
                 connection.commit();
 
                 LogsHelper.info("Transaction is commited.");

@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TaskDaoSpi {
-    TaskPersistence add(TaskPersistence object) throws SQLException, NoSuchMethodException;
+    TaskPersistence add(final TaskPersistence object) throws SQLException, NoSuchMethodException;
 
-    void delete(String id) throws SQLException, NoSuchMethodException;
+    void delete(final String id) throws SQLException, NoSuchMethodException;
 
-    Optional<TaskPersistence> update(TaskPersistence object, String id) throws SQLException, NoSuchMethodException;
+    Optional<TaskPersistence> update(final TaskPersistence object, final String id) throws SQLException, NoSuchMethodException;
 
     List<TaskPersistence> getAll() throws SQLException, NoSuchMethodException;
 
-    Optional<TaskPersistence> getById(String id) throws SQLException, NoSuchMethodException;
+    Optional<TaskPersistence> getById(final String id) throws SQLException, NoSuchMethodException;
 }

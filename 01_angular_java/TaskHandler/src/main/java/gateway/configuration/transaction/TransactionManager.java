@@ -6,7 +6,7 @@ public class TransactionManager {
 
     private static final ThreadLocal<Connection> context = new ThreadLocal<>();
 
-    public static void setConnection(Connection connection) {
+    public static void setConnection(final Connection connection) {
         context.set(connection);
     }
 

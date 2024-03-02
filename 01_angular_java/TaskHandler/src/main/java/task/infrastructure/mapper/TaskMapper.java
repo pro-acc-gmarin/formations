@@ -13,7 +13,7 @@ import java.util.List;
 public interface TaskMapper {
     TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
 
-    Task persistenceToDomain(TaskPersistence persistence);
-    TaskPersistence domainToPersistence(Task domain);
-    List<Task> persistenceListToDomainList(List<TaskPersistence> persistenceList);
+    Task persistenceToDomain(final TaskPersistence persistence);
+    TaskPersistence domainToPersistence(final Task domain);
+    List<Task> persistenceListToDomainList(final List<TaskPersistence> persistenceList);
 }

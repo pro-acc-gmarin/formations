@@ -17,7 +17,7 @@ import java.io.File;
 public class PrometheusServletContext implements ServletContextListener {
 
     @Override
-    public void contextInitialized(ServletContextEvent event) {
+    public void contextInitialized(final ServletContextEvent event) {
         new JvmThreadMetrics().bindTo(PrometheusMetricRegistry.getInstance().getRegistry());
         new JvmGcMetrics().bindTo(PrometheusMetricRegistry.getInstance().getRegistry());
         new JvmMemoryMetrics().bindTo(PrometheusMetricRegistry.getInstance().getRegistry());

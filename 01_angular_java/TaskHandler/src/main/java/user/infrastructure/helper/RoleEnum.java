@@ -8,11 +8,11 @@ public enum RoleEnum {
     ADMINISTRATOR("administrator");
 
     private final String label;
-    RoleEnum(String label) {
+    RoleEnum(final String label) {
         this.label = label;
     }
 
-    public static Optional<RoleEnum> fromString(String value){
+    public static Optional<RoleEnum> fromString(final String value){
         return Arrays.stream(values()).filter(currentEnum -> currentEnum.name().equals(value)).findFirst();
     }
 

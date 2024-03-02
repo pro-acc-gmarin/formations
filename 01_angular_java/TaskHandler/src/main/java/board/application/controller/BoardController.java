@@ -47,31 +47,31 @@ public class BoardController extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(final HttpServletRequest request, final HttpServletResponse response) {
         this.processRequest(request, response);
     }
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) {
-        String method = request.getMethod();
-        Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
+    private void processRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        final String method = request.getMethod();
+        final Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
         if (oCurrentMethodHTTPEnum.isPresent()) {
-            Optional<InBoardDto> oInBoardDto = (Optional<InBoardDto>) request.getAttribute("dto");
-            Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
+            final Optional<InBoardDto> oInBoardDto = (Optional<InBoardDto>) request.getAttribute("dto");
+            final Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInBoardDto, oParameter, oCurrentMethodHTTPEnum);
             } catch (IOException exception) {
@@ -87,7 +87,7 @@ public class BoardController extends HttpServlet {
     }
 
     @HandleException
-    private void dispatchAction(HttpServletResponse response, Optional<InBoardDto> oInBoardDto, Optional<String> oParameter, Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
+    private void dispatchAction(final HttpServletResponse response, final Optional<InBoardDto> oInBoardDto, final Optional<String> oParameter, final Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         if (oParameter.isPresent()) {
             this.dispatchActionWithParameter(response, oInBoardDto, oParameter.get(), oMethodHTTPEnum.get());
         } else {
@@ -95,7 +95,7 @@ public class BoardController extends HttpServlet {
         }
     }
 
-    private void dispatchActionWithParameter(HttpServletResponse response, Optional<InBoardDto> oInBoardDto, String parameter, MethodHTTPEnum methodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
+    private void dispatchActionWithParameter(final HttpServletResponse response, final Optional<InBoardDto> oInBoardDto, final String parameter, final MethodHTTPEnum methodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
         switch (methodHTTPEnum) {
             case DELETE:
                 this.service.delete(parameter);
@@ -104,7 +104,7 @@ public class BoardController extends HttpServlet {
                 break;
             case PUT:
                 if (oInBoardDto.isPresent()) {
-                    Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
+                    final Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
                     ResponseHelper.processResponse(response, mapper, this.service.update(requestBoard, parameter));
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.BOARD_CONTROLLER, String.format("Update %s succeed.", parameter));
@@ -113,7 +113,7 @@ public class BoardController extends HttpServlet {
                 }
                 break;
             case GET:
-                Optional<Board> oBoard = ofNullable(this.service.getById(parameter));
+                final Optional<Board> oBoard = ofNullable(this.service.getById(parameter));
                 if (oBoard.isPresent()) {
                     ResponseHelper.processResponse(response, mapper, oBoard.get());
                     response.setStatus(HttpServletResponse.SC_FOUND);
@@ -127,8 +127,8 @@ public class BoardController extends HttpServlet {
         }
     }
 
-    private void dispatchActionWithoutParameter(HttpServletResponse
-                                                        response, Optional<InBoardDto> oInBoardDto, MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException {
+    private void dispatchActionWithoutParameter(final HttpServletResponse
+                                                        response, final Optional<InBoardDto> oInBoardDto, final MethodHTTPEnum methodHTTPEnum) throws SQLException, IOException, NoSuchMethodException {
         switch (methodHTTPEnum) {
             case GET:
                 ResponseHelper.processResponse(response, mapper, this.service.getAll());
@@ -136,7 +136,7 @@ public class BoardController extends HttpServlet {
                 break;
             case POST:
                 if (oInBoardDto.isPresent()) {
-                    Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
+                    final Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
                     ResponseHelper.processResponse(response, mapper, this.service.add(requestBoard));
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {

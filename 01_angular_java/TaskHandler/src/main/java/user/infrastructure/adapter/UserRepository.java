@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class UserRepository implements UserPersistencePort {
 
-    final UserDaoSpi repository;
+    private final UserDaoSpi repository;
     private final UserMapper mapper;
 
     public UserRepository(final UserDaoSpi userDao) {
@@ -21,31 +21,31 @@ public class UserRepository implements UserPersistencePort {
     }
 
     @Override
-    public User add(User user) throws SQLException, NoSuchMethodException {
-        UserPersistence userPersistence = this.repository.add(mapper.domainToPersistence(user));
+    public User add(final User user) throws SQLException, NoSuchMethodException {
+        final UserPersistence userPersistence = this.repository.add(mapper.domainToPersistence(user));
         return mapper.persistenceToDomain(userPersistence);
     }
 
     @Override
-    public void delete(String id) throws SQLException, NoSuchMethodException {
+    public void delete(final String id) throws SQLException, NoSuchMethodException {
         this.repository.delete(id);
     }
 
     @Override
-    public User update(User user, String id) throws SQLException, NoSuchMethodException {
-        Optional<UserPersistence> oUserPersistence = this.repository.update(mapper.domainToPersistence(user), id);
+    public User update(final User user, final String id) throws SQLException, NoSuchMethodException {
+        final Optional<UserPersistence> oUserPersistence = this.repository.update(mapper.domainToPersistence(user), id);
         return oUserPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 
     @Override
     public List<User> getAll() throws SQLException, NoSuchMethodException {
-        List<UserPersistence> userPersistenceList = this.repository.getAll();
+        final List<UserPersistence> userPersistenceList = this.repository.getAll();
         return mapper.persistenceListToDomainList(userPersistenceList);
     }
 
     @Override
-    public User getById(String id) throws SQLException, NoSuchMethodException {
-        Optional<UserPersistence> optionalUser = this.repository.getById(id);
+    public User getById(final String id) throws SQLException, NoSuchMethodException {
+        final Optional<UserPersistence> optionalUser = this.repository.getById(id);
         return optionalUser.map(mapper::persistenceToDomain).orElse(null);
     }
 }

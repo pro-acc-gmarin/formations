@@ -24,7 +24,7 @@ public class UserDao implements UserDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("INSERT INTO user (id, firstname, lastname, email, password, role, salt) VALUES (?, ?, ?, ?, ?, ?, ?)")
-    public UserPersistence add(UserPersistence userPersistence) throws SQLException, NoSuchMethodException {
+    public UserPersistence add(final UserPersistence userPersistence) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), UserPersistence.class), Statement.RETURN_GENERATED_KEYS);
@@ -50,7 +50,7 @@ public class UserDao implements UserDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("DELETE FROM user WHERE id = ?")
-    public void delete(String id) throws SQLException, NoSuchMethodException {
+    public void delete(final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class), Statement.RETURN_GENERATED_KEYS);
@@ -67,7 +67,7 @@ public class UserDao implements UserDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("UPDATE user SET firstname = COALESCE(?, firstname), lastname = COALESCE(?, lastname), email = COALESCE(?, email) WHERE id = ?")
-    public Optional<UserPersistence> update(UserPersistence userPersistence, String id) throws SQLException, NoSuchMethodException {
+    public Optional<UserPersistence> update(final UserPersistence userPersistence, final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Optional<UserPersistence> oUserPersistence = this.getById(id);
         if (oUserPersistence.isPresent()) {
@@ -118,7 +118,7 @@ public class UserDao implements UserDaoSpi {
     @MeasurePerformance
     @Transactional
     @PreparedQuery("SELECT * FROM user WHERE id = ?")
-    public Optional<UserPersistence> getById(String id) throws SQLException, NoSuchMethodException {
+    public Optional<UserPersistence> getById(final String id) throws SQLException, NoSuchMethodException {
         final String currentMethodName = this.getMethodName(Thread.currentThread().getStackTrace()[1].getMethodName());
         final Connection connection = TransactionManager.getConnection();
         final PreparedStatement statement = connection.prepareStatement(PreparedQueryHelper.getPreparedQueryValueWithParameter(currentMethodName, this.getClass(), String.class));
@@ -143,8 +143,8 @@ public class UserDao implements UserDaoSpi {
         return UUID.randomUUID().toString();
     }
 
-    private String getMethodName(String methodName) {
-        String[] methodNameParts = methodName.split("_");
+    private String getMethodName(final String methodName) {
+        final String[] methodNameParts = methodName.split("_");
         return methodNameParts[0];
     }
 }

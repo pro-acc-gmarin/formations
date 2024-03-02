@@ -21,31 +21,31 @@ public class TaskRepository implements TaskPersistencePort {
     }
 
     @Override
-    public Task add(Task task) throws SQLException, NoSuchMethodException {
-        TaskPersistence taskPersistence = this.repository.add(mapper.domainToPersistence(task));
+    public Task add(final Task task) throws SQLException, NoSuchMethodException {
+        final TaskPersistence taskPersistence = this.repository.add(mapper.domainToPersistence(task));
         return mapper.persistenceToDomain(taskPersistence);
     }
 
     @Override
-    public void delete(String id) throws SQLException, NoSuchMethodException {
+    public void delete(final String id) throws SQLException, NoSuchMethodException {
         this.repository.delete(id);
     }
 
     @Override
-    public Task update(Task task, String id) throws SQLException, NoSuchMethodException {
-        Optional<TaskPersistence> oTaskPersistence = this.repository.update(mapper.domainToPersistence(task), id);
+    public Task update(final Task task, final String id) throws SQLException, NoSuchMethodException {
+        final Optional<TaskPersistence> oTaskPersistence = this.repository.update(mapper.domainToPersistence(task), id);
         return oTaskPersistence.map(mapper::persistenceToDomain).orElse(null);
     }
 
     @Override
     public List<Task> getAll() throws SQLException, NoSuchMethodException {
-        List<TaskPersistence> taskPersistenceList = this.repository.getAll();
+        final List<TaskPersistence> taskPersistenceList = this.repository.getAll();
         return mapper.persistenceListToDomainList(taskPersistenceList);
     }
 
     @Override
-    public Task getById(String id) throws SQLException, NoSuchMethodException {
-        Optional<TaskPersistence> optionalTask = this.repository.getById(id);
+    public Task getById(final String id) throws SQLException, NoSuchMethodException {
+        final Optional<TaskPersistence> optionalTask = this.repository.getById(id);
         return optionalTask.map(mapper::persistenceToDomain).orElse(null);
     }
 }

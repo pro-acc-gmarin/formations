@@ -10,11 +10,11 @@ public enum ServletNameEnum {
     LOGIN_SERVLET("LoginServlet");
 
     private final String label;
-    ServletNameEnum(String label) {
+    ServletNameEnum(final String label) {
         this.label = label;
     }
 
-    public static Optional<ServletNameEnum> fromString(String value){
+    public static Optional<ServletNameEnum> fromString(final String value){
         return Arrays.stream(values()).filter(currentEnum -> currentEnum.name().equals(value)).findFirst();
     }
 

@@ -8,14 +8,14 @@ import java.util.List;
 
 public interface TaskServicePort {
 
-    Task add(Task task) throws SQLException, NoSuchMethodException;
+    Task add(final Task task) throws SQLException, NoSuchMethodException;
 
-    void delete(String id) throws SQLException, NoSuchMethodException;
+    void delete(final String id) throws SQLException, NoSuchMethodException;
 
-    Task update(Task task, String id) throws SQLException, NoSuchMethodException;
+    Task update(final Task task, final String id) throws SQLException, NoSuchMethodException;
 
     List<Task> getAll() throws SQLException, NoSuchMethodException;
 
-    Task getById(String id) throws SQLException, NoSuchMethodException;
+    Task getById(final String id) throws SQLException, NoSuchMethodException;
 
 }

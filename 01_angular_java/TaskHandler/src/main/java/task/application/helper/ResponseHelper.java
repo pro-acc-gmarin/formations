@@ -16,27 +16,27 @@ import java.util.List;
 
 public class ResponseHelper {
 
-    static public String serializeOutTaskDtoListToJson(List<OutTaskDto> outTaskDtoList) throws IOException {
+    static public String serializeOutTaskDtoListToJson(final List<OutTaskDto> outTaskDtoList) throws IOException {
         return new ObjectMapper().writeValueAsString(outTaskDtoList);
     }
 
-    static public String serializeOutTaskDtoToJson(OutTaskDto outTaskDto) throws IOException {
+    static public String serializeOutTaskDtoToJson(final OutTaskDto outTaskDto) throws IOException {
         return new ObjectMapper().writeValueAsString(outTaskDto);
     }
 
-    static public void processResponse(HttpServletResponse response, TaskDtoMapper mapper, Task task) throws IOException {
-        OutTaskDto outTaskDto = mapper.domainToOutDto(task);
-        String taskJson = ResponseHelper.serializeOutTaskDtoToJson(outTaskDto);
+    static public void processResponse(final HttpServletResponse response, final TaskDtoMapper mapper, final Task task) throws IOException {
+        final OutTaskDto outTaskDto = mapper.domainToOutDto(task);
+        final String taskJson = ResponseHelper.serializeOutTaskDtoToJson(outTaskDto);
         ResponseHelper.sendJson(response, taskJson);
     }
 
-    static public void processResponse(HttpServletResponse response, TaskDtoMapper mapper, List<Task> taskList) throws IOException {
-        List<OutTaskDto> outTaskDtoList = mapper.domainListToOutDto(taskList);
-        String taskJson = ResponseHelper.serializeOutTaskDtoListToJson(outTaskDtoList);
+    static public void processResponse(final HttpServletResponse response, final TaskDtoMapper mapper, final List<Task> taskList) throws IOException {
+        final List<OutTaskDto> outTaskDtoList = mapper.domainListToOutDto(taskList);
+        final String taskJson = ResponseHelper.serializeOutTaskDtoListToJson(outTaskDtoList);
         ResponseHelper.sendJson(response, taskJson);
     }
 
-    static public void sendJson(HttpServletResponse response, String json) throws IOException {
+    static public void sendJson(final HttpServletResponse response, final String json) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);

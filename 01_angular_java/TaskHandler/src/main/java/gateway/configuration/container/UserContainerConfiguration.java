@@ -20,7 +20,7 @@ import static utils.enumerations.ServletContextKey.USER_CONTAINER;
 public class UserContainerConfiguration {
 
     public static void configure(final MutablePicoContainer globalContainer, final ServletContext servletContext) {
-        MutablePicoContainer userContainer = globalContainer.makeChildContainer();
+        final MutablePicoContainer userContainer = globalContainer.makeChildContainer();
         addComponents(userContainer);
         addProxies(userContainer, globalContainer);
         ServletContextHelper.setAttribute(servletContext, USER_CONTAINER, userContainer);
@@ -34,8 +34,8 @@ public class UserContainerConfiguration {
     }
 
     private static void addProxies(final MutablePicoContainer container, final MutablePicoContainer globalContainer) {
-        UserDaoSpi userDao = new UserDao();
-        UserDaoSpi userDaoProxy = TransactionProxyFactory.createProxy(userDao, globalContainer.getComponent(DataSource.class));
+        final UserDaoSpi userDao = new UserDao();
+        final UserDaoSpi userDaoProxy = TransactionProxyFactory.createProxy(userDao, globalContainer.getComponent(DataSource.class));
         container.addComponent(UserDaoSpi.class, userDaoProxy);
         LogsHelper.info(TASK_CONTAINER + " proxies added.");
     }

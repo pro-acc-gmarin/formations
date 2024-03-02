@@ -20,7 +20,7 @@ import static utils.enumerations.ServletContextKey.BOARD_CONTAINER;
 public class BoardContainerConfiguration {
 
     public static void configure(final MutablePicoContainer globalContainer, final ServletContext servletContext) {
-        MutablePicoContainer boardContainer = globalContainer.makeChildContainer();
+        final MutablePicoContainer boardContainer = globalContainer.makeChildContainer();
         addComponents(boardContainer);
         addProxies(boardContainer, globalContainer);
         ServletContextHelper.setAttribute(servletContext, BOARD_CONTAINER, boardContainer);
@@ -34,8 +34,8 @@ public class BoardContainerConfiguration {
     }
 
     private static void addProxies(final MutablePicoContainer container, final MutablePicoContainer globalContainer) {
-        BoardDaoSpi boardDao = new BoardDao();
-        BoardDaoSpi boardDaoProxy = TransactionProxyFactory.createProxy(boardDao, globalContainer.getComponent(DataSource.class));
+        final BoardDaoSpi boardDao = new BoardDao();
+        final BoardDaoSpi boardDaoProxy = TransactionProxyFactory.createProxy(boardDao, globalContainer.getComponent(DataSource.class));
         container.addComponent(BoardDaoSpi.class, boardDaoProxy);
         LogsHelper.info(BOARD_CONTAINER + " proxies added.");
     }

@@ -12,9 +12,9 @@ import java.util.List;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    User persistenceToDomain(UserPersistence persistence);
+    User persistenceToDomain(final UserPersistence persistence);
 
-    UserPersistence domainToPersistence(User domain);
+    UserPersistence domainToPersistence(final User domain);
 
-    List<User> persistenceListToDomainList(List<UserPersistence> persistenceList);
+    List<User> persistenceListToDomainList(final List<UserPersistence> persistenceList);
 }

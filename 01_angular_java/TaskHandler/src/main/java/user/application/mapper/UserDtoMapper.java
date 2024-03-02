@@ -12,8 +12,8 @@ import java.util.List;
 public interface UserDtoMapper {
     UserDtoMapper INSTANCE = Mappers.getMapper(UserDtoMapper.class);
 
-    User inUserDtoToUser(InUserDto userDto);
+    User inUserDtoToUser(final InUserDto userDto);
 
-    OutUserDto userToOutUserDto(User user);
-    List<OutUserDto> userListToOutUserDto(List<User> userList);
+    OutUserDto userToOutUserDto(final User user);
+    List<OutUserDto> userListToOutUserDto(final List<User> userList);
 }

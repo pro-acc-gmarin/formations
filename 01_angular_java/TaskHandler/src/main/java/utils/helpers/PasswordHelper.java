@@ -1,5 +1,6 @@
 package utils.helpers;
 
+import gateway.utils.LogsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +17,12 @@ import java.util.Random;
 public class PasswordHelper {
     private static final Random RANDOM = new SecureRandom();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("applicationlogs");
-
     public static class GENERATOR {
         private static final char[] ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]?".toCharArray();
         private static final int PASSWORD_LENGTH = 10;
 
         public static String generatePassword() {
-            char[] password = new char[PASSWORD_LENGTH];
+            final char[] password = new char[PASSWORD_LENGTH];
             password[0] = ALLOWED_CHARS[RANDOM.nextInt(ALLOWED_CHARS.length)];
             for (int i = 1; i < PASSWORD_LENGTH; ++i) {
                 password[i] = ALLOWED_CHARS[RANDOM.nextInt(ALLOWED_CHARS.length)];
@@ -32,10 +31,10 @@ public class PasswordHelper {
             return new String(password);
         }
 
-        private static void shuffleWithFisherYatesAlgorithm(char[] password){
+        private static void shuffleWithFisherYatesAlgorithm(final char[] password){
             for (int i = PASSWORD_LENGTH - 1; i > 0; --i) {
-                int j = RANDOM.nextInt(i + 1);
-                char temp = password[i];
+                final int j = RANDOM.nextInt(i + 1);
+                final char temp = password[i];
                 password[i] = password[j];
                 password[j] = temp;
             }
@@ -51,38 +50,38 @@ public class PasswordHelper {
         private static final int SALT_LENGTH = 16;
 
         public static String generateSalt() {
-            byte[] salt = new byte[SALT_LENGTH];
+            final byte[] salt = new byte[SALT_LENGTH];
             RANDOM.nextBytes(salt);
             return Base64.getEncoder().encodeToString(salt);
         }
 
 
-        public static Optional<String> hashPassword(String password, String salt) {
+        public static Optional<String> hashPassword(final String password, final String salt) {
 
             // Convert the password to a char array, allowing GC to clean the unused string.
-            char[] chars = password.toCharArray();
-            byte[] bytes = salt.getBytes();
+            final char[] chars = password.toCharArray();
+            final byte[] bytes = salt.getBytes();
 
-            PBEKeySpec spec = new PBEKeySpec(chars, bytes, ITERATIONS, KEY_LENGTH);
+            final PBEKeySpec spec = new PBEKeySpec(chars, bytes, ITERATIONS, KEY_LENGTH);
 
             // Clean the char array after using.
             Arrays.fill(chars, Character.MIN_VALUE);
 
             try {
-                SecretKeyFactory fac = SecretKeyFactory.getInstance(ALGORITHM);
-                byte[] securePassword = fac.generateSecret(spec).getEncoded();
+                final SecretKeyFactory fac = SecretKeyFactory.getInstance(ALGORITHM);
+                final byte[] securePassword = fac.generateSecret(spec).getEncoded();
                 return Optional.of(Base64.getEncoder().encodeToString(securePassword));
 
             } catch (NoSuchAlgorithmException | InvalidKeySpecException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.SECURITY, exception);
+                LogsHelper.error(LoggerHelper.SECURITY, exception);
                 return Optional.empty();
             } finally {
                 spec.clearPassword();
             }
         }
 
-        public static boolean verifyPassword(String password, String key, String salt) {
-            Optional<String> optEncrypted = hashPassword(password, salt);
+        public static boolean verifyPassword(final String password, final String key, final String salt) {
+            final Optional<String> optEncrypted = hashPassword(password, salt);
             if (!optEncrypted.isPresent()) return false;
             return optEncrypted.get().equals(key);
         }

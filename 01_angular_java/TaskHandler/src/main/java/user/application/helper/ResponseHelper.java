@@ -17,17 +17,17 @@ import static java.util.Optional.ofNullable;
 
 public class ResponseHelper {
 
-    static public String serializeOutUserDtoListToJson(List<OutUserDto> outUserDtoList) throws IOException {
+    static public String serializeOutUserDtoListToJson(final List<OutUserDto> outUserDtoList) throws IOException {
         return new ObjectMapper().writeValueAsString(outUserDtoList);
     }
 
-    static public String serializeOutUserDtoToJson(OutUserDto outUserDto) throws IOException {
+    static public String serializeOutUserDtoToJson(final OutUserDto outUserDto) throws IOException {
         return new ObjectMapper().writeValueAsString(outUserDto);
     }
 
-    static public void processResponse(HttpServletResponse response, User user) throws IOException {
-        OutUserDto outUserDto = UserDtoMapper.INSTANCE.userToOutUserDto(user);
-        String userJson = ResponseHelper.serializeOutUserDtoToJson(outUserDto);
+    static public void processResponse(final HttpServletResponse response, final User user) throws IOException {
+        final OutUserDto outUserDto = UserDtoMapper.INSTANCE.userToOutUserDto(user);
+        final String userJson = ResponseHelper.serializeOutUserDtoToJson(outUserDto);
         ResponseHelper.sendJson(response, userJson);
     }
 
