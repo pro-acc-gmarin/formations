@@ -6,8 +6,7 @@ import board.application.mapper.BoardDtoMapper;
 import board.domain.data.Board;
 import board.domain.ports.api.BoardServiceImpl;
 import board.domain.ports.api.BoardServicePort;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import board.utils.LogsHelper;
 import org.picocontainer.MutablePicoContainer;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
@@ -31,8 +30,6 @@ import static utils.enumerations.ServletContextKey.BOARD_CONTAINER;
 
 @WebServlet(name = "BoardServlet")
 public class BoardController extends HttpServlet {
-
-    private static final Logger LOGGER = LogManager.getLogger(BoardController.class);
 
     private final BoardDtoMapper mapper;
     private BoardServicePort service;
@@ -103,14 +100,14 @@ public class BoardController extends HttpServlet {
             case DELETE:
                 this.service.delete(parameter);
                 response.setStatus(HttpServletResponse.SC_FOUND);
-                LoggerHelper.logInfo(LOGGER, LoggerHelper.BOARD_CONTROLLER, String.format("Delete %s succeed.", parameter));
+                LogsHelper.info(LoggerHelper.BOARD_CONTROLLER, String.format("Delete %s succeed.", parameter));
                 break;
             case PUT:
                 if (oInBoardDto.isPresent()) {
                     Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
                     ResponseHelper.processResponse(response, mapper, this.service.update(requestBoard, parameter));
                     response.setStatus(HttpServletResponse.SC_FOUND);
-                    LoggerHelper.logInfo(LOGGER, LoggerHelper.BOARD_CONTROLLER, String.format("Update %s succeed.", parameter));
+                    LogsHelper.info(LoggerHelper.BOARD_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
                     throw new InvalidObjectException("Input datas are not valid.");
                 }
@@ -120,7 +117,7 @@ public class BoardController extends HttpServlet {
                 if (oBoard.isPresent()) {
                     ResponseHelper.processResponse(response, mapper, oBoard.get());
                     response.setStatus(HttpServletResponse.SC_FOUND);
-                    LoggerHelper.logInfo(LOGGER, LoggerHelper.BOARD_CONTROLLER, String.format("Get %s succeed.", parameter));
+                    LogsHelper.info(LoggerHelper.BOARD_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
                     throw new RecordNotFoundException(String.format("Record with id %s was not found.", parameter));
                 }

@@ -1,9 +1,8 @@
 package gateway.configuration.liquibase;
 
 import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
+import gateway.utils.LogsHelper;
 import liquibase.integration.servlet.LiquibaseServletListener;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.sql.DataSource;
@@ -14,9 +13,6 @@ import static java.util.Optional.ofNullable;
 
 public abstract class LiquibaseServletContext extends LiquibaseServletListener {
 
-
-    private static final Logger logger = LogManager.getLogger(LiquibaseServletContext.class);
-
     private DataSource dataSource;
     private String dataSourcePath;
     private String changeLogPath;
@@ -25,7 +21,7 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
-            logger.info("Liquibase servlet context initializing- START");
+            LogsHelper.info("Liquibase servlet context initializing- START");
             this.setDatasForProperties();
             this.initProperties();
             // Call parent contextInitialized() method to run Liquibase
@@ -34,17 +30,17 @@ public abstract class LiquibaseServletContext extends LiquibaseServletListener {
 
             throw new RuntimeException("Failed to initialize Liquibase!", e);
         }finally {
-            logger.info("Liquibase servlet context initializing - END");
+            LogsHelper.info("Liquibase servlet context initializing - END");
         }
     }
 
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        logger.info("Liquibase servlet context destroying - START");
+        LogsHelper.info("Liquibase servlet context destroying - START");
         super.contextDestroyed(sce);
         AbandonedConnectionCleanupThread.checkedShutdown();
-        logger.info("Liquibase servlet context destroying - END");
+        LogsHelper.info("Liquibase servlet context destroying - END");
     }
 
     public void setDataSource(DataSource dataSource){

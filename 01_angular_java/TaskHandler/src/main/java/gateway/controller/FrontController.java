@@ -1,9 +1,7 @@
 package gateway.controller;
 
 import board.application.dto.InBoardDto;
-import gateway.InitServletContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import gateway.utils.LogsHelper;
 import task.application.dto.InTaskDto;
 import user.application.dto.InUserDto;
 import user.application.helper.RequestHelper;
@@ -24,8 +22,6 @@ import static utils.enumerations.ServletNameEnum.*;
 
 @WebServlet(name = "FrontServlet", loadOnStartup = 1, urlPatterns = {"/", "/*"})
 public class FrontController extends HttpServlet {
-
-    private static Logger LOGGER = LogManager.getLogger(FrontController.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
@@ -54,7 +50,7 @@ public class FrontController extends HttpServlet {
             try {
                 this.dispatchToServlet(request, response, firstPartUri, uri);
             } catch (IOException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.GATEWAY_CONTROLLER, exception);
+                LogsHelper.error(LoggerHelper.GATEWAY_CONTROLLER, exception);
             }
         });
     }
@@ -85,7 +81,7 @@ public class FrontController extends HttpServlet {
                         break;
                 }
             } catch (IOException | ServletException exception) {
-                LoggerHelper.logError(LOGGER, LoggerHelper.GATEWAY_CONTROLLER, exception);
+                LogsHelper.error(LoggerHelper.GATEWAY_CONTROLLER, exception);
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }

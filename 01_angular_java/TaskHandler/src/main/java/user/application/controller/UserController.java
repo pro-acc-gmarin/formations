@@ -1,7 +1,6 @@
 package user.application.controller;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import board.utils.LogsHelper;
 import org.picocontainer.MutablePicoContainer;
 import user.application.dto.InUserDto;
 import user.application.helper.ResponseHelper;
@@ -31,8 +30,6 @@ import static utils.enumerations.ServletContextKey.USER_CONTAINER;
 
 @WebServlet(name = "UserServlet")
 public class UserController extends HttpServlet {
-
-    private static final Logger LOGGER = LogManager.getLogger(UserController.class);
 
     private UserServicePort service;
     private final UserDtoMapper mapper;
@@ -102,14 +99,14 @@ public class UserController extends HttpServlet {
             case DELETE:
                 this.service.delete(parameter);
                 response.setStatus(HttpServletResponse.SC_FOUND);
-                LoggerHelper.logInfo(LOGGER, LoggerHelper.USER_CONTROLLER, String.format("Delete %s succeed.", parameter));
+                LogsHelper.info(LoggerHelper.USER_CONTROLLER, String.format("Delete %s succeed.", parameter));
                 break;
             case PUT:
                 if (oInUserDto.isPresent()) {
                     User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
                     ResponseHelper.processResponse(response, this.service.update(requestUser, parameter));
                     response.setStatus(HttpServletResponse.SC_FOUND);
-                    LoggerHelper.logInfo(LOGGER, LoggerHelper.USER_CONTROLLER, String.format("Update %s succeed.", parameter));
+                    LogsHelper.info(LoggerHelper.USER_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
                     throw new InvalidObjectException("Input datas are not valid.");
                 }
@@ -119,7 +116,7 @@ public class UserController extends HttpServlet {
                 if (oUser.isPresent()) {
                     ResponseHelper.processResponse(response, oUser.get());
                     response.setStatus(HttpServletResponse.SC_FOUND);
-                    LoggerHelper.logInfo(LOGGER, LoggerHelper.USER_CONTROLLER, String.format("Get %s succeed.", parameter));
+                    LogsHelper.info(LoggerHelper.USER_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
                     throw new RecordNotFoundException(String.format("Record with id %s was not found.", parameter));
                 }

@@ -1,8 +1,7 @@
 package utils.helpers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import user.infrastructure.dao.UserDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -17,7 +16,7 @@ import java.util.Random;
 public class PasswordHelper {
     private static final Random RANDOM = new SecureRandom();
 
-    private static final Logger LOGGER = LogManager.getLogger(PasswordHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("applicationlogs");
 
     public static class GENERATOR {
         private static final char[] ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]?".toCharArray();

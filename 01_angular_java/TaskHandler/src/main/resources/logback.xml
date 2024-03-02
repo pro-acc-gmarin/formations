@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
+
+    <property name="LOG_PATH" value="${catalina.base:-.}/app-logs" />
+
+    <!-- Appender de base pour les logs d'application -->
+    <appender name="applicationLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/applicationlogs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/applicationlogs.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level %logger{10} [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="gatewayLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/gatewaylogs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/gatewaylogs.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level %logger{10} [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="userLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/userlogs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/userlogs.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level %logger{10} [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="taskLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/tasklogs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/tasklogs.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level %logger{10} [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="boardLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/boardlogs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/boardlogs.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level %logger{10} [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="GATEWAY" level="INFO">
+        <appender-ref ref="gatewayLogs" />
+    </logger>
+    <logger name="APPLICATION" level="INFO">
+        <appender-ref ref="applicationLogs" />
+    </logger>
+    <logger name="BOARD" level="INFO">
+        <appender-ref ref="boardLogs" />
+    </logger>
+    <logger name="USER" level="INFO">
+        <appender-ref ref="userLogs" />
+    </logger>
+    <logger name="TASK" level="INFO">
+        <appender-ref ref="taskLogs" />
+    </logger>
+
+    <root level="debug">
+        <appender-ref ref="applicationLogs" />
+        <appender-ref ref="gatewayLogs" />
+        <appender-ref ref="userLogs" />
+        <appender-ref ref="taskLogs" />
+        <appender-ref ref="boardLogs" />
+    </root>
+</configuration>

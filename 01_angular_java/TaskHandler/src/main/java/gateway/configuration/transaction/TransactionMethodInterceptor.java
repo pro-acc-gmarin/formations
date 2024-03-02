@@ -1,7 +1,6 @@
 package gateway.configuration.transaction;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import gateway.utils.LogsHelper;
 import utils.annotations.Transactional;
 
 import javax.sql.DataSource;
@@ -11,8 +10,6 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 
 public class TransactionMethodInterceptor implements InvocationHandler {
-
-    private static final Logger logger = LogManager.getLogger(TransactionMethodInterceptor.class);
     private final Object target;
     private final DataSource dataSource;
 
@@ -23,7 +20,7 @@ public class TransactionMethodInterceptor implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        logger.info("Dao Method Interceptor - Start");
+        LogsHelper.info("Dao Method Interceptor - Start");
        final Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
         if (targetMethod.isAnnotationPresent(Transactional.class)) {
             Connection connection = dataSource.getConnection();
@@ -33,19 +30,19 @@ public class TransactionMethodInterceptor implements InvocationHandler {
                 Object result = method.invoke(target, args);
                 connection.commit();
 
-                logger.info("Transaction is commited.");
+                LogsHelper.info("Transaction is commited.");
                 return result;
             } catch (InvocationTargetException e) {
                 connection.rollback();
-                logger.info("Transaction is rollbacked.");
+                LogsHelper.info("Transaction is rollbacked.");
                 throw e.getTargetException();
             } finally {
                 connection.close();
                 TransactionManager.clear();
-                logger.info("Dao Method Interceptor - End");
+                LogsHelper.info("Dao Method Interceptor - End");
             }
         } else {
-            logger.info("Dao Method not transactional.");
+            LogsHelper.info("Dao Method not transactional.");
             return method.invoke(target, args);
         }
     }

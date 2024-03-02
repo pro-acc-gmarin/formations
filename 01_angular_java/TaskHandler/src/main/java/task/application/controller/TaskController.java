@@ -1,7 +1,6 @@
 package task.application.controller;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import board.utils.LogsHelper;
 import org.picocontainer.MutablePicoContainer;
 import task.application.dto.InTaskDto;
 import task.application.helper.ResponseHelper;
@@ -31,8 +30,6 @@ import static utils.enumerations.ServletContextKey.TASK_CONTAINER;
 
 @WebServlet(name = "TaskServlet")
 public class TaskController extends HttpServlet {
-
-    private static final Logger LOGGER = LogManager.getLogger(TaskController.class);
 
     private TaskServicePort service;
     private final TaskDtoMapper mapper;
@@ -103,14 +100,14 @@ public class TaskController extends HttpServlet {
             case DELETE:
                 this.service.delete(parameter);
                 response.setStatus(HttpServletResponse.SC_FOUND);
-                LoggerHelper.logInfo(LOGGER, LoggerHelper.TASK_CONTROLLER, String.format("Delete %s succeed.", parameter));
+                LogsHelper.info(LoggerHelper.TASK_CONTROLLER, String.format("Delete %s succeed.", parameter));
                 break;
             case PUT:
                 if (oInTaskDto.isPresent()) {
                     Task requestTask = this.mapper.inDtoToDomain(oInTaskDto.get());
                     ResponseHelper.processResponse(response, mapper, this.service.update(requestTask, parameter));
                     response.setStatus(HttpServletResponse.SC_FOUND);
-                    LoggerHelper.logInfo(LOGGER, LoggerHelper.TASK_CONTROLLER, String.format("Update %s succeed.", parameter));
+                    LogsHelper.info(LoggerHelper.TASK_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
                     throw new InvalidObjectException("Input datas are not valid.");
                 }
@@ -120,7 +117,7 @@ public class TaskController extends HttpServlet {
                 if (oTask.isPresent()) {
                     ResponseHelper.processResponse(response, mapper, oTask.get());
                     response.setStatus(HttpServletResponse.SC_FOUND);
-                    LoggerHelper.logInfo(LOGGER, LoggerHelper.TASK_CONTROLLER, String.format("Get %s succeed.", parameter));
+                    LogsHelper.info(LoggerHelper.TASK_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
                     throw new RecordNotFoundException(String.format("Record with id %s was not found.", parameter));
                 }
