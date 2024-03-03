@@ -4,9 +4,11 @@ import board.infrastructure.entity.BoardPersistence;
 import board.infrastructure.spi.BoardDaoSpi;
 import gateway.configuration.transaction.TransactionManager;
 import org.apache.commons.lang3.StringUtils;
+import utils.RestUtils;
 import utils.annotations.MeasurePerformance;
 import utils.annotations.PreparedQuery;
 import utils.annotations.Transactional;
+import utils.enumerations.RestContextEnum;
 import utils.helpers.ListHelper;
 import utils.helpers.PreparedQueryHelper;
 
@@ -112,7 +114,7 @@ public class BoardDao implements BoardDaoSpi {
             boardPersistence.setId_owner(resultSet.getString("id_owner"));
             boardPersistence.setTitle(resultSet.getString("title"));
             boardPersistence.setDescription(resultSet.getString("description"));
-            boardPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
+            boardPersistence.setLinked_tasks(RestUtils.splitStringToHypermediaList(RestContextEnum.TASK,resultSet.getString("linked_tasks")));
             boardPersistenceList.add(boardPersistence);
         }
 
@@ -135,7 +137,7 @@ public class BoardDao implements BoardDaoSpi {
             boardPersistence.setId_owner(resultSet.getString("id_owner"));
             boardPersistence.setTitle(resultSet.getString("title"));
             boardPersistence.setDescription(resultSet.getString("description"));
-            boardPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
+            boardPersistence.setLinked_tasks(RestUtils.splitStringToHypermediaList(RestContextEnum.TASK,resultSet.getString("linked_tasks")));
             return of(boardPersistence);
         }
 

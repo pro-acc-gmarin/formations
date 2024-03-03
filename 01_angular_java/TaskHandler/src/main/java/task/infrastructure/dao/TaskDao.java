@@ -4,9 +4,11 @@ import gateway.configuration.transaction.TransactionManager;
 import org.apache.commons.lang3.StringUtils;
 import task.infrastructure.entity.TaskPersistence;
 import task.infrastructure.spi.TaskDaoSpi;
+import utils.RestUtils;
 import utils.annotations.MeasurePerformance;
 import utils.annotations.PreparedQuery;
 import utils.annotations.Transactional;
+import utils.enumerations.RestContextEnum;
 import utils.helpers.ListHelper;
 import utils.helpers.PreparedQueryHelper;
 
@@ -121,7 +123,7 @@ public class TaskDao implements TaskDaoSpi {
             taskPersistence.setTitle(resultSet.getString("title"));
             taskPersistence.setDescription(resultSet.getString("description"));
             taskPersistence.setCreation_date(resultSet.getString("creation_date"));
-            taskPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
+            taskPersistence.setLinked_tasks(RestUtils.splitStringToHypermediaList(RestContextEnum.TASK,resultSet.getString("linked_tasks")));
             taskPersistenceList.add(taskPersistence);
         }
 
@@ -146,7 +148,7 @@ public class TaskDao implements TaskDaoSpi {
             taskPersistence.setTitle(resultSet.getString("title"));
             taskPersistence.setDescription(resultSet.getString("description"));
             taskPersistence.setCreation_date(resultSet.getString("creation_date"));
-            taskPersistence.setLinked_tasks(ListHelper.splitStringToList(resultSet.getString("linked_tasks")));
+            taskPersistence.setLinked_tasks(RestUtils.splitStringToHypermediaList(RestContextEnum.TASK,resultSet.getString("linked_tasks")));
             return of(taskPersistence);
         }
 
