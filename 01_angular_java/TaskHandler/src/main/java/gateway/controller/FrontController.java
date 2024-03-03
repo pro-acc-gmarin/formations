@@ -5,6 +5,7 @@ import gateway.utils.LogsHelper;
 import task.application.dto.InTaskDto;
 import user.application.dto.InUserDto;
 import user.application.helper.RequestHelper;
+import utils.enumerations.ServletContextKey;
 import utils.enumerations.UriControllerEnum;
 import utils.helpers.LoggerHelper;
 import utils.helpers.UriHelper;
@@ -89,7 +90,7 @@ public class FrontController extends HttpServlet {
 
     private void setRequestAttributes(final HttpServletRequest request, final String uri, final Class dtoClass) throws IOException {
         request.setAttribute("parameter", UriHelper.getUriParameterPart(uri));
-        request.setAttribute("dto", RequestHelper.getDtoFromRequestBody(request, dtoClass));
+        request.setAttribute(ServletContextKey.DTO.name(), RequestHelper.getDtoFromRequestBody(request, dtoClass));
     }
 
     private void forwardToServlet(final HttpServletRequest request, final HttpServletResponse response, final String servletName) throws IOException, ServletException {

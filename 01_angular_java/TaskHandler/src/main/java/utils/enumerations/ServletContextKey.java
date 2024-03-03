@@ -5,5 +5,6 @@ public enum ServletContextKey {
     TASK_CONTAINER,
     USER_CONTAINER,
     GLOBAL_CONTAINER,
-    DATASOURCE
+    DATASOURCE,
+    DTO
 }

@@ -1,13 +1,9 @@
 package board.application.helper;
 
-import board.application.dto.InBoardDto;
 import board.application.dto.OutBoardDto;
 import board.application.mapper.BoardDtoMapper;
 import board.domain.data.Board;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import task.application.dto.OutTaskDto;
-import task.application.mapper.TaskDtoMapper;
-import task.domain.data.Task;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,8 +19,7 @@ public class ResponseHelper {
         return new ObjectMapper().writeValueAsString(outBoardDto);
     }
 
-    static public void processResponse(final HttpServletResponse response, final BoardDtoMapper mapper, final Board board) throws IOException {
-        final OutBoardDto outBoardDto = mapper.domainToOutDto(board);
+    static public void processResponse(final HttpServletResponse response, final OutBoardDto outBoardDto) throws IOException {
         final String taskJson = ResponseHelper.serializeOutBoardDtoToJson(outBoardDto);
         ResponseHelper.sendJson(response, taskJson);
     }

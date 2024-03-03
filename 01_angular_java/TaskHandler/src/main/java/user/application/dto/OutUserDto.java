@@ -1,11 +1,9 @@
 package user.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -15,4 +13,7 @@ public class OutUserDto {
     private String lastname;
     private String email;
     private String role;
+    public String toString(){
+        return firstname+lastname+email;
+    }
 }

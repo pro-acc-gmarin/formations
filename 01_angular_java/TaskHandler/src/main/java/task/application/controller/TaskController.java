@@ -3,6 +3,7 @@ package task.application.controller;
 import board.utils.LogsHelper;
 import org.picocontainer.MutablePicoContainer;
 import task.application.dto.InTaskDto;
+import task.application.dto.OutTaskDto;
 import task.application.helper.ResponseHelper;
 import task.application.mapper.TaskDtoMapper;
 import task.domain.data.Task;
@@ -10,6 +11,7 @@ import task.domain.ports.api.TaskServiceImpl;
 import task.domain.ports.api.TaskServicePort;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
+import utils.enumerations.ServletContextKey;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 import utils.helpers.ServletContextHelper;
@@ -70,7 +72,7 @@ public class TaskController extends HttpServlet {
         final String method = request.getMethod();
         final Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
         if (oCurrentMethodHTTPEnum.isPresent()) {
-            final Optional<InTaskDto> oInTaskDto = (Optional<InTaskDto>) request.getAttribute("dto");
+            final Optional<InTaskDto> oInTaskDto = (Optional<InTaskDto>) request.getAttribute(ServletContextKey.DTO.name());
             final Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInTaskDto, oParameter, oCurrentMethodHTTPEnum);
@@ -105,7 +107,10 @@ public class TaskController extends HttpServlet {
             case PUT:
                 if (oInTaskDto.isPresent()) {
                     final Task requestTask = this.mapper.inDtoToDomain(oInTaskDto.get());
-                    ResponseHelper.processResponse(response, mapper, this.service.update(requestTask, parameter));
+                    final Task updatedTask = this.service.update(requestTask, parameter);
+                    final OutTaskDto outTaskDto = mapper.domainToOutDto(updatedTask);
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outTaskDto);
+                    ResponseHelper.processResponse(response, outTaskDto);
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.TASK_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
@@ -115,7 +120,9 @@ public class TaskController extends HttpServlet {
             case GET:
                 final Optional<Task> oTask = ofNullable(this.service.getById(parameter));
                 if (oTask.isPresent()) {
-                    ResponseHelper.processResponse(response, mapper, oTask.get());
+                    final OutTaskDto outTaskDto = mapper.domainToOutDto(oTask.get());
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outTaskDto);
+                    ResponseHelper.processResponse(response, outTaskDto);
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.TASK_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
@@ -137,7 +144,10 @@ public class TaskController extends HttpServlet {
             case POST:
                 if (oInTaskDto.isPresent()) {
                     final Task requestTask = this.mapper.inDtoToDomain(oInTaskDto.get());
-                    ResponseHelper.processResponse(response, mapper, this.service.add(requestTask));
+                    final Task createdTask = this.service.add(requestTask);
+                    final OutTaskDto outTaskDto = mapper.domainToOutDto(createdTask);
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outTaskDto);
+                    ResponseHelper.processResponse(response, outTaskDto);
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {
                     throw new InvalidObjectException("Input datas are not valid.");

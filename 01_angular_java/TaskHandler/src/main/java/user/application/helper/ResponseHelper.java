@@ -1,19 +1,14 @@
 package user.application.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import user.application.dto.InUserDto;
 import user.application.dto.OutUserDto;
 import user.application.mapper.UserDtoMapper;
 import user.domain.data.User;
+import utils.filter.EtagUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 
 public class ResponseHelper {
 
@@ -25,8 +20,7 @@ public class ResponseHelper {
         return new ObjectMapper().writeValueAsString(outUserDto);
     }
 
-    static public void processResponse(final HttpServletResponse response, final User user) throws IOException {
-        final OutUserDto outUserDto = UserDtoMapper.INSTANCE.userToOutUserDto(user);
+    static public void processResponse(final HttpServletResponse response, OutUserDto outUserDto) throws IOException {
         final String userJson = ResponseHelper.serializeOutUserDtoToJson(outUserDto);
         ResponseHelper.sendJson(response, userJson);
     }
@@ -41,5 +35,10 @@ public class ResponseHelper {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
+    }
+
+    static public void addEtagHeader(final OutUserDto outUserDto, final HttpServletResponse response) {
+        final String eTag = EtagUtils.generateETag(outUserDto.toString());
+        response.setHeader("ETag", eTag);
     }
 }

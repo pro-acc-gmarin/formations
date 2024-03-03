@@ -1,6 +1,7 @@
 package board.application.controller;
 
 import board.application.dto.InBoardDto;
+import board.application.dto.OutBoardDto;
 import board.application.helper.ResponseHelper;
 import board.application.mapper.BoardDtoMapper;
 import board.domain.data.Board;
@@ -10,6 +11,7 @@ import board.utils.LogsHelper;
 import org.picocontainer.MutablePicoContainer;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
+import utils.enumerations.ServletContextKey;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 import utils.helpers.ServletContextHelper;
@@ -70,7 +72,7 @@ public class BoardController extends HttpServlet {
         final String method = request.getMethod();
         final Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
         if (oCurrentMethodHTTPEnum.isPresent()) {
-            final Optional<InBoardDto> oInBoardDto = (Optional<InBoardDto>) request.getAttribute("dto");
+            final Optional<InBoardDto> oInBoardDto = (Optional<InBoardDto>) request.getAttribute(ServletContextKey.DTO.name());
             final Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInBoardDto, oParameter, oCurrentMethodHTTPEnum);
@@ -88,10 +90,12 @@ public class BoardController extends HttpServlet {
 
     @HandleException
     private void dispatchAction(final HttpServletResponse response, final Optional<InBoardDto> oInBoardDto, final Optional<String> oParameter, final Optional<MethodHTTPEnum> oMethodHTTPEnum) throws IOException, SQLException, NoSuchMethodException, RecordNotFoundException {
-        if (oParameter.isPresent()) {
-            this.dispatchActionWithParameter(response, oInBoardDto, oParameter.get(), oMethodHTTPEnum.get());
-        } else {
-            this.dispatchActionWithoutParameter(response, oInBoardDto, oMethodHTTPEnum.get());
+        if(oMethodHTTPEnum.isPresent()) {
+            if (oParameter.isPresent()) {
+                this.dispatchActionWithParameter(response, oInBoardDto, oParameter.get(), oMethodHTTPEnum.get());
+            } else {
+                this.dispatchActionWithoutParameter(response, oInBoardDto, oMethodHTTPEnum.get());
+            }
         }
     }
 
@@ -105,7 +109,10 @@ public class BoardController extends HttpServlet {
             case PUT:
                 if (oInBoardDto.isPresent()) {
                     final Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
-                    ResponseHelper.processResponse(response, mapper, this.service.update(requestBoard, parameter));
+                    final Board updatedBoard = this.service.update(requestBoard, parameter);
+                    final OutBoardDto outBoardDto = mapper.domainToOutDto(updatedBoard);
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outBoardDto);
+                    ResponseHelper.processResponse(response, outBoardDto);
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.BOARD_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
@@ -115,7 +122,9 @@ public class BoardController extends HttpServlet {
             case GET:
                 final Optional<Board> oBoard = ofNullable(this.service.getById(parameter));
                 if (oBoard.isPresent()) {
-                    ResponseHelper.processResponse(response, mapper, oBoard.get());
+                    final OutBoardDto outBoardDto = mapper.domainToOutDto(oBoard.get());
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outBoardDto);
+                    ResponseHelper.processResponse(response, outBoardDto);
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.BOARD_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
@@ -137,7 +146,10 @@ public class BoardController extends HttpServlet {
             case POST:
                 if (oInBoardDto.isPresent()) {
                     final Board requestBoard = this.mapper.inDtoToDomain(oInBoardDto.get());
-                    ResponseHelper.processResponse(response, mapper, this.service.add(requestBoard));
+                    final Board createdBoard = this.service.add(requestBoard);
+                    final OutBoardDto outBoardDto = mapper.domainToOutDto(createdBoard);
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outBoardDto);
+                    ResponseHelper.processResponse(response, outBoardDto);
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {
                     throw new InvalidObjectException("Input datas are not valid.");

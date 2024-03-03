@@ -3,6 +3,7 @@ package user.application.controller;
 import board.utils.LogsHelper;
 import org.picocontainer.MutablePicoContainer;
 import user.application.dto.InUserDto;
+import user.application.dto.OutUserDto;
 import user.application.helper.ResponseHelper;
 import user.application.mapper.UserDtoMapper;
 import user.domain.data.User;
@@ -10,6 +11,7 @@ import user.domain.ports.api.UserServiceImpl;
 import user.domain.ports.api.UserServicePort;
 import utils.annotations.HandleException;
 import utils.enumerations.MethodHTTPEnum;
+import utils.enumerations.ServletContextKey;
 import utils.exception.RecordNotFoundException;
 import utils.helpers.LoggerHelper;
 import utils.helpers.ServletContextHelper;
@@ -70,7 +72,7 @@ public class UserController extends HttpServlet {
         final String method = request.getMethod();
         final Optional<MethodHTTPEnum> oCurrentMethodHTTPEnum = MethodHTTPEnum.fromString(method);
         if (oCurrentMethodHTTPEnum.isPresent()) {
-            final Optional<InUserDto> oInUserDto = (Optional<InUserDto>) request.getAttribute("dto");
+            final Optional<InUserDto> oInUserDto = (Optional<InUserDto>) request.getAttribute(ServletContextKey.DTO.name());
             final Optional<String> oParameter = (Optional<String>) request.getAttribute("parameter");
             try {
                 this.dispatchAction(response, oInUserDto, oParameter, oCurrentMethodHTTPEnum);
@@ -104,7 +106,11 @@ public class UserController extends HttpServlet {
             case PUT:
                 if (oInUserDto.isPresent()) {
                     final User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
-                    ResponseHelper.processResponse(response, this.service.update(requestUser, parameter));
+                    final User createdUser = this.service.update(requestUser, parameter);
+                    final OutUserDto outUserDto = mapper.userToOutUserDto(createdUser);
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outUserDto);
+                    ResponseHelper.addEtagHeader(outUserDto, response);
+                    ResponseHelper.processResponse(response, outUserDto);
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.USER_CONTROLLER, String.format("Update %s succeed.", parameter));
                 } else {
@@ -114,7 +120,9 @@ public class UserController extends HttpServlet {
             case GET:
                 final Optional<User> oUser = ofNullable(this.service.getById(parameter));
                 if (oUser.isPresent()) {
-                    ResponseHelper.processResponse(response, oUser.get());
+                    final OutUserDto outUserDto = mapper.userToOutUserDto(oUser.get());
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outUserDto);
+                    ResponseHelper.processResponse(response, outUserDto);
                     response.setStatus(HttpServletResponse.SC_FOUND);
                     LogsHelper.info(LoggerHelper.USER_CONTROLLER, String.format("Get %s succeed.", parameter));
                 } else {
@@ -135,7 +143,11 @@ public class UserController extends HttpServlet {
             case POST:
                 if (oInUserDto.isPresent()) {
                     final User requestUser = this.mapper.inUserDtoToUser(oInUserDto.get());
-                    ResponseHelper.processResponse(response, this.service.add(requestUser));
+                    final User createdUser = this.service.add(requestUser);
+                    final OutUserDto outUserDto = mapper.userToOutUserDto(createdUser);
+                    getServletContext().setAttribute(ServletContextKey.DTO.name(), outUserDto);
+                    ResponseHelper.addEtagHeader(outUserDto, response);
+                    ResponseHelper.processResponse(response, outUserDto);
                     response.setStatus(HttpServletResponse.SC_CREATED);
                 } else {
                     throw new InvalidObjectException("Input datas are not valid.");

@@ -1,6 +1,8 @@
 package gateway.configuration.container;
 
 import com.zaxxer.hikari.HikariDataSource;
+import gateway.cache.model.DateCacheManager;
+import gateway.cache.model.EtagCacheManager;
 import gateway.utils.LogsHelper;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
@@ -31,6 +33,8 @@ public class GlobalContainerConfiguration {
     private static void addComponents(final MutablePicoContainer container, final ServletContext servletContext) {
         final HikariDataSource hikariDataSource = (HikariDataSource) ServletContextHelper.getAttribute(servletContext, DATASOURCE);
         container.addComponent(DataSource.class, hikariDataSource);
+        container.addComponent(DateCacheManager.class, new DateCacheManager<String, String>());
+        container.addComponent(EtagCacheManager.class, new EtagCacheManager<String, String>());
         LogsHelper.info(GLOBAL_CONTAINER + " components added.");
     }
 
