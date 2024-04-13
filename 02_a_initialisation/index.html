@@ -6,14 +6,14 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../img/favicon.ico" rel="shortcut icon"/>
-<title>Développement du projet - DocForm</title>
+<title>Initialisation - DocForm</title>
 <link href="../css/theme.css" rel="stylesheet"/>
 <link href="../css/theme_extra.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
 <script>
         // Current page data
-        var mkdocs_page_name = "D\u00e9veloppement du projet";
-        var mkdocs_page_input_path = "02_developpement_projet.md";
+        var mkdocs_page_name = "Initialisation";
+        var mkdocs_page_input_path = "02_a_initialisation.md";
         var mkdocs_page_url = null;
       </script>
 <!--[if lt IE 9]>
@@ -45,13 +45,13 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../01_initialisation_projet/">Initialisation du projet</a>
 </li>
-<li class="toctree-l3 current"><a class="reference internal current" href="./">Développement du projet</a>
+<li class="toctree-l3 current"><a class="reference internal current" href="#">Développement du projet</a>
 <ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="#initialisation-du-modele-de-donnees">Initialisation du modèle de données</a>
+<li class="toctree-l4 current"><a class="reference internal current" href="./">Initialisation</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#dependances-maven">Dépendances Maven</a>
+<li class="toctree-l4"><a class="reference internal" href="../02_b_architecture_hexagonale/">Architecture hexagonale</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#architecture-monolithe-hexagonal">Architecture : Monolithe hexagonal</a>
+<li class="toctree-l4"><a class="reference internal" href="../02_c_api_crud/">API Crud</a>
 </li>
 </ul>
 </li>
@@ -75,7 +75,8 @@
 <li class="breadcrumb-item">Formations</li>
 <li class="breadcrumb-item">JAVA</li>
 <li class="breadcrumb-item">Conception de Framework</li>
-<li class="breadcrumb-item active">Développement du projet</li>
+<li class="breadcrumb-item">Développement du projet</li>
+<li class="breadcrumb-item active">Initialisation</li>
 <li class="wy-breadcrumbs-aside">
 </li>
 </ul>
@@ -115,6 +116,16 @@
     }
 </div>
 <h2 id="dependances-maven">Dépendances Maven</h2>
+<h3 id="tomcat-api">Tomcat API</h3>
+<ul>
+<li>Ajout de la dépendance dans le pom.xml:</li>
+</ul>
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.tomcat&lt;/groupId&gt;
+        &lt;artifactId&gt;tomcat-servlet-api&lt;/artifactId&gt;
+        &lt;version&gt;${org.apache.tomcat.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
 <h3 id="lombok">Lombok</h3>
 <p>Utilisez lombok pour faciliter la génération des différentes méthodes de classes. (Constructeur, Setter/Getter, Hash, ToString, etc..)
 - Ajout de la dépendance dans le pom.xml:</p>
@@ -122,7 +133,7 @@
 &lt;dependency&gt;
   &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
   &lt;artifactId&gt;lombok&lt;/artifactId&gt;
-  &lt;version&gt;1.18.26&lt;/version&gt;
+  &lt;version&gt;${org.projectlombok.version}&lt;/version&gt;
   &lt;scope&gt;provided&lt;/scope&gt;
 &lt;/dependency&gt;
 ```
@@ -164,37 +175,11 @@
 </ul>
 <h3 id="intellij">IntellIJ</h3>
 <p>Pour activer la génération des annotations : aller dans Settings &gt; Annotation Processor et activer l'option.</p>
-<h2 id="architecture-monolithe-hexagonal">Architecture : Monolithe hexagonal</h2>
-<p><strong>Créez l'arborescence de package suivante pour votre application :</strong></p>
-<pre><code>/
-    board
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    user
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    task
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    gateway
-        configuration (package déjà existant à déplacer)
-</code></pre>
 </div>
 </div><footer>
 <div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
 <a class="btn btn-neutral float-left" href="../01_initialisation_projet/" title="Initialisation du projet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../02_b_architecture_hexagonale/" title="Architecture hexagonale">Next <span class="icon icon-circle-arrow-right"></span></a>
 </div>
 <hr/>
 <div role="contentinfo">
@@ -210,6 +195,7 @@
 <div aria-label="Versions" class="rst-versions" role="note">
 <span class="rst-current-version" data-toggle="rst-current-version">
 <span><a href="../01_initialisation_projet/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../02_b_architecture_hexagonale/" style="color: #fcfcfc">Next »</a></span>
 </span>
 </div>
 <script src="../js/jquery-3.6.0.min.js"></script>

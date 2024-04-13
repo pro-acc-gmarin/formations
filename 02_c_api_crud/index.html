@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>API Crud - DocForm</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "API Crud";
+        var mkdocs_page_input_path = "02_c_api_crud.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DocForm
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Formations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">JAVA</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Conception de Framework</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../00_installation_environnement/">Installation Environnement</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../01_initialisation_projet/">Initialisation du projet</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Développement du projet</a>
+    <ul class="current">
+                <li class="toctree-l4"><a class="reference internal" href="../02_a_initialisation/">Initialisation</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../02_b_architecture_hexagonale/">Architecture hexagonale</a>
+                </li>
+                <li class="toctree-l4 current"><a class="reference internal current" href="./">API Crud</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DocForm</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Formations</li>
+          <li class="breadcrumb-item">JAVA</li>
+          <li class="breadcrumb-item">Conception de Framework</li>
+          <li class="breadcrumb-item">Développement du projet</li>
+      <li class="breadcrumb-item active">API Crud</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="api-crud">API CRUD</h1>
+<p>On va ici appliquer les principes d'une <a href="https://blog.nicolashachet.com/developpement-php/larchitecture-rest-expliquee-en-5-regles/"><strong>architecture REST</strong></a>.</p>
+<h2 id="cors-filter">CORS filter</h2>
+<p>Ajoutez un <a href="https://medium.com/@tarang.chikhalia/how-to-enable-cors-origin-in-apache-tomcat-e0042eae5017"><strong>filtre CORS</strong></a> :
+    à votre descripteur de déploiement (web.xml) :</p>
+<pre><code>    &lt;filter&gt;
+        &lt;filter-name&gt;CorsFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;org.apache.catalina.filters.CorsFilter&lt;/filter-class&gt;
+        &lt;init-param&gt;
+          &lt;param-name&gt;cors.allowed.origins&lt;/param-name&gt;
+          &lt;param-value&gt;https://editor.swagger.io&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+          &lt;param-name&gt;cors.allowed.methods&lt;/param-name&gt;
+          &lt;param-value&gt;GET,POST,PUT,DELETE,OPTIONS&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+          &lt;param-name&gt;cors.support.credentials&lt;/param-name&gt;
+          &lt;param-value&gt;true&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+          &lt;param-name&gt;cors.allowed.headers&lt;/param-name&gt;
+          &lt;param-value&gt;Authorization&lt;/param-value&gt;
+        &lt;/init-param&gt;
+  &lt;/filter&gt;
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;CorsFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+</code></pre>
+<h2 id="controleurs">Contrôleurs</h2>
+<ul>
+<li>Pour chaque ressource :<ul>
+<li>Créez un package <strong>'controller'</strong> dans le package <strong>'application'</strong>.</li>
+<li>Créez une classe <strong>'<nom_ressource>Controller'</strong> qui étends <strong>'HttpServlet'</strong> et surcharge les méthodes <strong>'doGet'</strong>, <strong>'doPost'</strong>, <strong>'doPut'</strong> et <strong>'doDelete'</strong>.<blockquote>
+<p>Note : Pour chaque servlet, vous utiliserez l'annotation @WebServlet pour définir son nom et son mapping. Vous pouvez cependant faire la même chose en y déclarant dans le descripteur de déploiement (web.xml).</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="dto"><a href="https://snyk.io/fr/blog/how-to-use-java-dtos/">DTO</a></h3>
+<ul>
+<li>
+<p>Pour chaque ressource, dans le package <strong>'application'</strong> :</p>
+<ul>
+<li>Créez un package <strong>'dto'</strong>, puis dans ce dernier créez:<ul>
+<li>un POJO <strong>'In<nom_resource>Dto'</strong> pour la récupération des corps de requêtes, correspondant au domain mais sans son identifiant technique.</li>
+<li>un POJO <strong>'Out<nom_resource>Dto'</strong> pour le renvoie des données dans la réponse, correspondant au domain avec son identifiant technique mais sans les données sensibles (par exemple : mot de passe).</li>
+</ul>
+</li>
+<li>Créez un package <strong>'mapper'</strong>, puis créez un mapper MapStruct <strong>'<nom_resource>DtoMapper'</strong> :</li>
+</ul>
+<p>```</p>
+<pre><code>&lt;nom_resource&gt;DtoMapper INSTANCE = Mappers.getMapper(&lt;nom_resource&gt;DtoMapper.class);
+&lt;nom_resource&gt; inDtoToDomain(In&lt;nom_resource&gt;Dto in);
+Out&lt;nom_resource&gt;Dto domainToOutDto(&lt;nom_resource&gt; domain);
+List&lt;Out&lt;nom_resource&gt;Dto&gt; domainListToOutDto(List&lt;&lt;nom_resource&gt;&gt; domainList);
+</code></pre>
+<p>```</p>
+</li>
+</ul>
+<h3 id="front-controller"><a href="https://www.baeldung.com/java-front-controller-pattern">Front Controller</a></h3>
+<ul>
+<li>Dans le package <strong>'gateway'</strong>, créez le package <strong>'controller'</strong>, puis :<ul>
+<li>Créez une classe <strong>'DispatcherServlet'</strong> qui étends <strong>'HttpServlet'</strong> :<ul>
+<li>Le front controller doit être le seul à capter les URLs, cette servlet doit donc être chargée en première et on donc spécifier le paramètre "loadOnStartup" à 1.</li>
+<li>Surchargez les méthodes <strong>'doGet'</strong>, <strong>'doPost'</strong>, <strong>'doPut'</strong> et <strong>'doDelete'</strong></li>
+<li>Créez une méthode privée <strong>'dispatchRequest(final HttpServletRequest request, final HttpServletResponse response)'</strong> qui sera utilisé dans chaque méthodes <strong>'do'</strong><ul>
+<li>Chaque requête visera une ressource, et donc l'URI de la requête contiendra le nom de la ressource visée (task, user ou board):<h2 id="-recuperez-luri-de-la-requete-avec-requestgetrequesturi-puis-faites-en-sortes-de-recuperer-la-partie-de-luri-qui-vous-interesse">- Récupérez l'URI de la requête avec <strong>request.getRequestURI()</strong> puis faites en sortes de récupérer la partie de l'URI qui vous intéresse.</h2>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../02_b_architecture_hexagonale/" class="btn btn-neutral float-left" title="Architecture hexagonale"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../02_b_architecture_hexagonale/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
