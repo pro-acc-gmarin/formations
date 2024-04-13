@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Développement du projet - DocForm</title>
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "D\u00e9veloppement du projet";
+        var mkdocs_page_input_path = "02_developpement_projet.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> DocForm
+        </a>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Formations</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="#">JAVA</a>
+<ul class="current">
+<li class="toctree-l2 current"><a class="reference internal current" href="#">Conception de Framework</a>
+<ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../00_installation_environnement/">Installation Environnement</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../01_initialisation_projet/">Initialisation du projet</a>
+</li>
+<li class="toctree-l3 current"><a class="reference internal current" href="./">Développement du projet</a>
+<ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="#initialisation-du-modele-de-donnees">Initialisation du modèle de données</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#dependances-maven">Dépendances Maven</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#architecture-monolithe-hexagonal">Architecture : Monolithe hexagonal</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">DocForm</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href=".."></a></li>
+<li class="breadcrumb-item">Formations</li>
+<li class="breadcrumb-item">JAVA</li>
+<li class="breadcrumb-item">Conception de Framework</li>
+<li class="breadcrumb-item active">Développement du projet</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="developpement-du-projet">Développement du projet</h1>
+<h2 id="initialisation-du-modele-de-donnees">Initialisation du modèle de données</h2>
+<div class="mermaid">erDiagram
+    User ||--o{ Task : "creates"
+    User ||--o{ Board : "owns"
+    Task ||--o{ Board : "belongs to"
+
+    User {
+        UUID id
+        String firstName
+        String lastName
+        String email
+        boolean approval
+        String role
+    }
+
+    Task {
+        UUID id
+        UUID authorId
+        String title
+        String description
+        Date creationDate
+    }
+
+    Board {
+        UUID id
+        UUID ownerId
+        String title
+        String description
+    }
+</div>
+<h2 id="dependances-maven">Dépendances Maven</h2>
+<h3 id="lombok">Lombok</h3>
+<p>Utilisez lombok pour faciliter la génération des différentes méthodes de classes. (Constructeur, Setter/Getter, Hash, ToString, etc..)
+- Ajout de la dépendance dans le pom.xml:</p>
+<pre><code>```
+&lt;dependency&gt;
+  &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+  &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+  &lt;version&gt;1.18.26&lt;/version&gt;
+  &lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;
+```
+</code></pre>
+<ul>
+<li>
+<p>Ajout dans la configuration du compiler maven :</p>
+<p><code>&lt;annotationProcessorPaths&gt;
+    &lt;path&gt;
+        &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+        &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+        &lt;version&gt;${org.projectlombok.version}&lt;/version&gt;
+    &lt;/path&gt;
+&lt;/annotationProcessorPaths&gt;</code></p>
+</li>
+</ul>
+<h3 id="mapstruct">MapStruct</h3>
+<p>Utilisez la librairie MapStruct pour la création des mappers.
+- Ajout de la dépendance dans le <strong>pom.xml</strong>:</p>
+<pre><code>``` 
+&lt;dependency&gt;
+  &lt;groupId&gt;org.mapstruct&lt;/groupId&gt;
+  &lt;artifactId&gt;mapstruct&lt;/artifactId&gt;
+  &lt;version&gt;${org.mapstruct.version}&lt;/version&gt;
+&lt;/dependency&gt;
+```
+</code></pre>
+<ul>
+<li>
+<p>Ajout dans la configuration du compiler maven :</p>
+<p><code>&lt;annotationProcessorPaths&gt;
+  &lt;path&gt;
+    &lt;groupId&gt;org.mapstruct&lt;/groupId&gt;
+    &lt;artifactId&gt;mapstruct-processor&lt;/artifactId&gt;
+    &lt;version&gt;${org.mapstruct.version}&lt;/version&gt;
+  &lt;/path&gt;
+&lt;/annotationProcessorPaths&gt;</code></p>
+</li>
+</ul>
+<h3 id="intellij">IntellIJ</h3>
+<p>Pour activer la génération des annotations : aller dans Settings &gt; Annotation Processor et activer l'option.</p>
+<h2 id="architecture-monolithe-hexagonal">Architecture : Monolithe hexagonal</h2>
+<p><strong>Créez l'arborescence de package suivante pour votre application :</strong></p>
+<pre><code>/
+    board
+        application
+        domain
+            api
+            data
+            spi
+        infrastructure
+    user
+        application
+        domain
+            api
+            data
+            spi
+        infrastructure
+    task
+        application
+        domain
+            api
+            data
+            spi
+        infrastructure
+    gateway
+        configuration (package déjà existant à déplacer)
+</code></pre>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../01_initialisation_projet/" title="Initialisation du projet"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="../01_initialisation_projet/" style="color: #fcfcfc">« Previous</a></span>
+</span>
+</div>
+<script src="../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "..";</script>
+<script src="../js/theme_extra.js"></script>
+<script src="../js/theme.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>
