@@ -121,15 +121,24 @@
     &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
   &lt;/filter-mapping&gt;
 </code></pre>
-<h2 id="controleurs">Contrôleurs</h2>
+<h2 id="controleurs"><a href="https://gayerie.dev/epsi-b3-javaee/javaee_web/servlet.html">Contrôleurs</a></h2>
+<blockquote>
+<p>Note : Pour chaque servlet, vous utiliserez l'annotation @WebServlet pour définir son nom et son mapping (seulement pour le front controller). Vous pouvez cependant faire la même chose en y déclarant dans le descripteur de déploiement (web.xml).</p>
+</blockquote>
 <ul>
 <li>Pour chaque ressource :<ul>
 <li>Créez un package <strong>'controller'</strong> dans le package <strong>'application'</strong>.</li>
-<li>Créez une classe <strong>'<nom_ressource>Controller'</strong> qui étends <strong>'HttpServlet'</strong> et surcharge les méthodes <strong>'doGet'</strong>, <strong>'doPost'</strong>, <strong>'doPut'</strong> et <strong>'doDelete'</strong>.<blockquote>
-<p>Note : Pour chaque servlet, vous utiliserez l'annotation @WebServlet pour définir son nom et son mapping. Vous pouvez cependant faire la même chose en y déclarant dans le descripteur de déploiement (web.xml).</p>
-</blockquote>
-</li>
+<li>Créez une classe <strong>'<nom_ressource>Controller'</strong> qui étends <strong>'HttpServlet'</strong> et surcharge les méthodes <strong>'doGet'</strong>, <strong>'doPost'</strong>, <strong>'doPut'</strong> et <strong>'doDelete'</strong>.</li>
 </ul>
+</li>
+<li>
+<p>Créez un package <strong>'utils'</strong> à la raçine de votre arborescence, puis créez un package <strong>'enumeration'</strong>:</p>
+<ul>
+<li>Créez une énumération <strong>'RessourceNameEnum</strong>'" afin de définir les énumérations suivantes :</li>
+</ul>
+<p><code>USER("user"),
+    BOARD("board"),
+    TASK("task");</code></p>
 </li>
 </ul>
 <h3 id="dto"><a href="https://snyk.io/fr/blog/how-to-use-java-dtos/">DTO</a></h3>
@@ -157,13 +166,52 @@ List&lt;Out&lt;nom_resource&gt;Dto&gt; domainListToOutDto(List&lt;&lt;nom_resour
 <ul>
 <li>Dans le package <strong>'gateway'</strong>, créez le package <strong>'controller'</strong>, puis :<ul>
 <li>Créez une classe <strong>'DispatcherServlet'</strong> qui étends <strong>'HttpServlet'</strong> :<ul>
-<li>Le front controller doit être le seul à capter les URLs, cette servlet doit donc être chargée en première et on donc spécifier le paramètre "loadOnStartup" à 1.</li>
+<li>Le front controller doit être le seul à capter les URLs, cette servlet doit donc être chargée en première et on doit donc spécifier le paramètre "loadOnStartup" à 1.</li>
 <li>Surchargez les méthodes <strong>'doGet'</strong>, <strong>'doPost'</strong>, <strong>'doPut'</strong> et <strong>'doDelete'</strong></li>
 <li>Créez une méthode privée <strong>'dispatchRequest(final HttpServletRequest request, final HttpServletResponse response)'</strong> qui sera utilisé dans chaque méthodes <strong>'do'</strong><ul>
-<li>Chaque requête visera une ressource, et donc l'URI de la requête contiendra le nom de la ressource visée (task, user ou board):<h2 id="-recuperez-luri-de-la-requete-avec-requestgetrequesturi-puis-faites-en-sortes-de-recuperer-la-partie-de-luri-qui-vous-interesse">- Récupérez l'URI de la requête avec <strong>request.getRequestURI()</strong> puis faites en sortes de récupérer la partie de l'URI qui vous intéresse.</h2>
+<li>
+<p>Chaque requête visera une ressource, et donc l'URI de la requête contiendra le nom de la ressource visée (task, user ou board):</p>
+<ul>
+<li>Récupérez l'URI de la requête avec <strong>request.getRequestURI()</strong> puis faites en sortes de récupérer la partie de l'URI qui vous intéresse.</li>
+<li>En utilisant l'énumération <strong>'RessourceNameEnum</strong>'", on pourra ensuite rediriger vers la bonne servlet par son nom (déclaré par @WebServlet ou dans le fichier web.xml):</li>
+</ul>
+<p>``` </p>
+<pre><code>RequestDispatcher requestDispatcher = request.getServletContext().getNamedDispatcher(servletName);
+requestDispatcher.forward(request, response);
+</code></pre>
+<p>```</p>
+<ul>
+<li>Vous pouvez aussi passer en attribut de requête <strong>request.setAttribute("parameter", value)</strong> , le corps de la requête ou les potentiels paramètres passés dans l'URI.</li>
+</ul>
 </li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="content-negociation-filter"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation">Content Negociation filter</a></h3>
+<ul>
+<li>Créez un package <strong>'filter'</strong> dans le package <strong>'gateway'</strong>.</li>
+<li>Ajoutez ce nouveau filtre dans le descripteur de déploiement (web.xml) après le filtre CORS, en précisant les filter-mapping pour chaque URI possible (ex: /board, /board/*).</li>
+<li>Dans la méthode <strong>'doFilter'</strong> faites en sorte que le filtre accepte toutes les méthodes possibles :<ul>
+<li>Si le header “Accept” n’est pas spécifié, la réponse renvoie une erreur 400</li>
+<li>Si le type n’est pas supporté, on renvoie une erreur 406.</li>
+<li>Sinon on continue la chaîne de filtre avec doFilter().</li>
+</ul>
+</li>
+</ul>
+<h3 id="hypermedia-as-the-engine-of-application-state-hateoas"><a href="https://restfulapi.net/hateoas/">Hypermedia as the Engine of Application State (HATEOAS)</a></h3>
+<ul>
+<li>Pour chaque ressource:<ul>
+<li>Rajoutez dans chaque DTO une liste de string vers la ressource adaptée:<ul>
+<li>Une liste de string <strong>'linkedBoards'</strong> pour les DTOs de la ressource user.</li>
+<li>Une liste de string <strong>'linkedTasks'</strong> pour les DTOs des ressource board et task.</li>
+</ul>
+</li>
+<li>Quand on récupèrera via les tables d'association les ressources liées, on construira, pour chaque ressource liée, une URL (string) en rajoutant son id (ex: http://localhost:8080/api/board/1). <ul>
+<li>Créez une classe utilitaire dans le package <strong>'utils'</strong> </li>
 </ul>
 </li>
 </ul>

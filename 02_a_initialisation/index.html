@@ -90,29 +90,50 @@
     User ||--o{ Task : "creates"
     User ||--o{ Board : "owns"
     Task ||--o{ Board : "belongs to"
+    User ||--|| Board : "manages"
+    Board ||--|| Task : "contains"
+    Task ||--|| Task : "linked to"
+    User ||--|| Board : "participates"
 
     User {
-        UUID id
-        String firstName
-        String lastName
-        String email
-        boolean approval
-        String role
+        varchar(36) id
+        varchar(50) firstName
+        varchar(50) lastName
+        text email
+        varchar(50) password
+        tinyint(1) is_approved
+        varchar(8) role
     }
 
     Task {
-        UUID id
-        UUID authorId
-        String title
-        String description
-        Date creationDate
+        varchar(36) id
+        varchar(36) authorId
+        varchar(100) title
+        text description
+        varchar(30) creation_date
     }
 
     Board {
-        UUID id
-        UUID ownerId
-        String title
-        String description
+        varchar(36) id
+        varchar(36) ownerId
+        varchar(100) title
+        text description
+        text linked_tasks
+    }
+
+    Board_Task {
+        varchar(36) boardId
+        varchar(36) taskId
+    }
+
+    Task_Link {
+        varchar(36) taskId1
+        varchar(36) taskId2
+    }
+
+    User_Board {
+        varchar(36) userId
+        varchar(36) boardId
     }
 </div>
 <h2 id="dependances-maven">Dépendances Maven</h2>
