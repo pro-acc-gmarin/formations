@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Architecture hexagonale - DocForm</title>
+    <title>Logging - DocForm</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Architecture hexagonale";
-        var mkdocs_page_input_path = "02_b_architecture_hexagonale.md";
+        var mkdocs_page_name = "Logging";
+        var mkdocs_page_input_path = "02_f_logging.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -53,7 +53,7 @@
     <ul class="current">
                 <li class="toctree-l4"><a class="reference internal" href="../02_a_initialisation/">Initialisation</a>
                 </li>
-                <li class="toctree-l4 current"><a class="reference internal current" href="./">Architecture hexagonale</a>
+                <li class="toctree-l4"><a class="reference internal" href="../02_b_architecture_hexagonale/">Architecture hexagonale</a>
                 </li>
                 <li class="toctree-l4"><a class="reference internal" href="../02_c_api_crud/">API Crud</a>
                 </li>
@@ -61,7 +61,7 @@
                 </li>
                 <li class="toctree-l4"><a class="reference internal" href="../02_e_aop/">A.O.P</a>
                 </li>
-                <li class="toctree-l4"><a class="reference internal" href="../02_f_logging/">Logging</a>
+                <li class="toctree-l4 current"><a class="reference internal current" href="./">Logging</a>
                 </li>
     </ul>
                 </li>
@@ -88,7 +88,7 @@
           <li class="breadcrumb-item">JAVA</li>
           <li class="breadcrumb-item">Conception de Framework</li>
           <li class="breadcrumb-item">Développement du projet</li>
-      <li class="breadcrumb-item active">Architecture hexagonale</li>
+      <li class="breadcrumb-item active">Logging</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -97,80 +97,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="architecture-monolithe-hexagonal">Architecture : Monolithe hexagonal</h1>
-<p><strong>Créez l'arborescence de package suivante pour votre application :</strong></p>
-<pre><code>/
-    board
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    user
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    task
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    gateway
-        configuration (package déjà existant à déplacer)
+                <h1 id="logging">Logging</h1>
+<h2 id="slf4j">Slf4j</h2>
+<h3 id="maven">Maven</h3>
+<p>Ajouter les dépendances suivantes dans votre <strong>'pom.xml'</strong> :</p>
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j-api&lt;/artifactId&gt;
+        &lt;version&gt;2.20.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+        &lt;artifactId&gt;log4j-core&lt;/artifactId&gt;
+        &lt;version&gt;2.20.0&lt;/version&gt;
+    &lt;/dependency&gt;
 </code></pre>
-<h2 id="domain-ports">Domain &amp; Ports</h2>
-<ul>
-<li>
-<p>Pour chaque ressource :</p>
-<ul>
-<li>Définissez les POJOs (objet domain) représentant les données définies en base (user, task et board) dans le package <strong>'data'</strong> du package <strong>'domain'</strong>.</li>
-<li>
-<p>Définissez dans le package <strong>'api'</strong> une interface <strong>'<nom_ressource>ServicePort'</strong> avec les signatures de méthode suivantes :</p>
-<p>```</p>
-<pre><code>Board add(final Board board);
-void delete(final String id);
-Board update(final Board board, final String id);
-List&lt;Board&gt; getAll();
-Board getById(final String id);
+<p>Ajouter dans le build la définition du répertoire de resource:</p>
+<pre><code>    &lt;resources&gt;
+      &lt;resource&gt;
+        &lt;directory&gt;src/main/resources&lt;/directory&gt;
+        &lt;filtering&gt;true&lt;/filtering&gt;
+      &lt;/resource&gt;
+    &lt;/resources&gt;
 </code></pre>
-<p>```</p>
-</li>
-<li>
-<p>Définissez dans le package <strong>'spi'</strong> une interface <strong>'<nom_ressource>PersistencePort'</strong> avec les mêmes signatures de méthode.</p>
-</li>
-<li>
-<p>Définissez dans le package <strong>'api'</strong> l'implémentation <strong>'<nom_ressource>ServiceImpl'</strong> de votre interface du <strong>'service port'</strong>.</p>
+<h3 id="configuration">Configuration</h3>
 <ul>
-<li>Cette implémentation va utiliser le persistence port, qui sera passé en propriété de classe :</li>
+<li>Créer un dossier <strong>'configuration'</strong> dans votre dossier de resources, puis créer un fichier <strong>'log4j2.xml'</strong> dedans.</li>
+<li>Dans le package <strong>'gateway'</strong> puis <strong>'configuration'</strong>, créer une classe <strong>'Log4jConfiguration'</strong> qui implémentera une méthode statique <strong>'setConfigLocation'</strong> qui chargera le fichier de configuration log4j2 :</li>
 </ul>
-<p>```</p>
-<pre><code>private final &lt;nom_ressource&gt;PersistencePort &lt;nom_ressource&gt;PersistencePort;
-
-public &lt;nom_ressource&gt;ServiceImpl(&lt;nom_ressource&gt;PersistencePort &lt;nom_ressource&gt;PersistencePort) {
-    this.&lt;nom_ressource&gt;PersistencePort = &lt;nom_ressource&gt;PersistencePort;
-}
+<pre><code>     public static void setConfigLocation(){
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        try {
+            context.setConfigLocation(Log4j2Configuration.class.getResource(&quot;/configuration/log4j2.xml&quot;).toURI());
+        } catch (final URISyntaxException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 </code></pre>
-<p>```
-- L'implémentation des méthodes va donc appeler les méthodes correspondantes du persistence port, ex :</p>
-<p><code>public &lt;nom_ressource&gt; add(&lt;nom_ressource&gt; &lt;nom_ressource&gt;) {
-        return this.&lt;nom_ressource&gt;PersistencePort.add(&lt;nom_ressource&gt;);
-    }</code></p>
+<ul>
+<li>
+<p>Appeler cette méthode statique, dans la méthode <strong>'contexteInitialized'</strong> de votre <strong>'InitServletContext'</strong>.</p>
 </li>
+<li>
+<p>Dans le fichier <strong>log4j2.xml</strong>, faites en sorte de déclarer un appender pour chaque resource et un autre pour tout ce qui est application en général:</p>
+<ul>
+<li>Chaque appender doit écrire dans un fichier horodaté différent.</li>
+<li>Définir le logger qui utilisera ces appenders en level <strong>debug</strong>.</li>
 </ul>
 </li>
+</ul>
+<h3 id="utilisation">Utilisation</h3>
+<ul>
+<li>AOP : Logger les exceptions remontées dans l'aspect d'Handling Exception.</li>
 </ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../02_a_initialisation/" class="btn btn-neutral float-left" title="Initialisation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../02_c_api_crud/" class="btn btn-neutral float-right" title="API Crud">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../02_e_aop/" class="btn btn-neutral float-left" title="A.O.P"><span class="icon icon-circle-arrow-left"></span> Previous</a>
     </div>
 
   <hr/>
@@ -193,10 +177,8 @@ public &lt;nom_ressource&gt;ServiceImpl(&lt;nom_ressource&gt;PersistencePort &lt
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../02_a_initialisation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../02_e_aop/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
-    
-      <span><a href="../02_c_api_crud/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Repository - DocForm</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Repository";
+        var mkdocs_page_input_path = "02_d_repository.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> DocForm
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Formations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">JAVA</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Conception de Framework</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../00_installation_environnement/">Installation Environnement</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../01_initialisation_projet/">Initialisation du projet</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Développement du projet</a>
+    <ul class="current">
+                <li class="toctree-l4"><a class="reference internal" href="../02_a_initialisation/">Initialisation</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../02_b_architecture_hexagonale/">Architecture hexagonale</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../02_c_api_crud/">API Crud</a>
+                </li>
+                <li class="toctree-l4 current"><a class="reference internal current" href="./">Repository</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../02_e_aop/">A.O.P</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../02_f_logging/">Logging</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">DocForm</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Formations</li>
+          <li class="breadcrumb-item">JAVA</li>
+          <li class="breadcrumb-item">Conception de Framework</li>
+          <li class="breadcrumb-item">Développement du projet</li>
+      <li class="breadcrumb-item active">Repository</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="repository">Repository</h1>
+<h2 id="entity">Entity</h2>
+<p>Pour chaque ressource, dans le package <strong>'infrastructure'</strong> : 
+    - Créer un package entity, puis dans ce package créer un POJO <strong>'<nom_resource>Entity'</strong> avec les mêmes propriétés que le domain sans les identifiants techniques.
+    - Créer un package mapper, puis dans ce package créer une classe <strong>'<nom_resource>Mapper'</strong> :
+    <code>&lt;nom_resource&gt;Mapper INSTANCE = Mappers.getMapper(&lt;nom_resource&gt;Mapper.class);
+        &lt;nom_resource&gt; entityToDomain(final &lt;nom_resource&gt;Entity entity);
+        &lt;nom_resource&gt;Entity domainToEntity(final &lt;nom_resource&gt; domain);
+        List&lt;&lt;nom_resource&gt;&gt; entityListToDomainList(final List&lt;&lt;nom_resource&gt;Entity&gt; entityList);</code></p>
+<h2 id="design-pattern-dao">Design Pattern : <a href="https://www.baeldung.com/java-dao-pattern">DAO</a></h2>
+<p>Pour chaque ressource, dans le package <strong>'infrastructure'</strong> :
+    - Créer un package <strong>'spi'</strong> puis dedans, créer une interface <strong>'<nom_resource>DaoSpi'</strong> :
+    <code>&lt;nom_resource&gt;Entity add(final &lt;nom_resource&gt;Entity object);
+    void delete(final String id);
+    Optional&lt;&lt;nom_resource&gt;Entity&gt; update(final &lt;nom_resource&gt;Entity object, final String id);
+    List&lt;&lt;nom_resource&gt;Entity&gt; getAll();
+    Optional&lt;&lt;nom_resource&gt;Entity&gt; getById(final String id);</code>
+    - Créer un package <strong>'dao'</strong> puis dedans , créer une classe <strong>'<nom_resource>Dao'</strong> qui implémente la spi précédemment créée.</p>
+<h3 id="interargir-avec-la-base-de-donnee">Intérargir avec la base de donnée</h3>
+<pre><code>- Récupérez une connection et faire une requête préparée avec la méthode **'prepareStatement(...)**' de votre connection, à laquelle vous passerez votre requête SQL paramétrée :
+    - ex pour DELETE :
+
+    ```
+        try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+            final PreparedStatement statement = connection.prepareStatement("DELETE FROM ressource WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, id);
+            if (statement.executeUpdate() == 0) {
+                throw new SQLException("Deleting board failed, no rows affected.");
+            }
+        }
+    ```
+</code></pre>
+<h3 id="requete-sql-par-annotation">Requête SQL par annotation</h3>
+<pre><code>- Dans votre package **'utils'** à la raçine, créer un package **'annotation'** puis créer l'annotation **'@SQLQuery'**:
+
+```
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface PreparedQuery {
+        String value();
+    }
+```
+
+- Afin de récupérer la valeur passée dans l'annotation, on va utiliser la réflection java :
+    - On récupère le nom de la méthode courante :
+
+    ```
+    final String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+    ```
+
+    - On récupère la méthode courante :
+    ```
+    final Method currentMethod = enclosingClass.getDeclaredMethod(methodName);
+    ```
+
+    - On récupère l'annotation :
+    ```
+    final SQLQuery annotation = currentMethod.getAnnotation(SQLQuery.class);
+    ```
+
+    - Puis sa valeur avec **'value()'** (vous pouvez faire une classe Helper pour la récupération de sa valeur):
+
+    ```
+        @PreparedQuery("DELETE FROM resource WHERE id = ?")
+        public void delete(String id) {
+            String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            final Method currentMethod = enclosingClass.getDeclaredMethod(methodName);
+            final SQLQuery annotation = currentMethod.getAnnotation(SQLQuery.class);
+            try (Connection connection = ConnectionPool.getInstance().getConnection()) {
+                PreparedStatement statement = connection.prepareStatement(annotation.value(), Statement.RETURN_GENERATED_KEYS);
+                statement.setString(1, id);
+                int affectedRows = statement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Deleting user failed, no rows affected.");
+                }
+            } catch (NoSuchMethodException | SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    ```
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../02_c_api_crud/" class="btn btn-neutral float-left" title="API Crud"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../02_e_aop/" class="btn btn-neutral float-right" title="A.O.P">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../02_c_api_crud/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../02_e_aop/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

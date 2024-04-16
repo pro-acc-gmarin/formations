@@ -53,6 +53,12 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../02_c_api_crud/">API Crud</a>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="../02_d_repository/">Repository</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../02_e_aop/">A.O.P</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../02_f_logging/">Logging</a>
+</li>
 </ul>
 </li>
 </ul>
@@ -118,7 +124,6 @@
         varchar(36) ownerId
         varchar(100) title
         text description
-        text linked_tasks
     }
 
     Board_Task {
@@ -135,6 +140,13 @@
         varchar(36) userId
         varchar(36) boardId
     }
+
+    User ||--o{ User_Board : "participates"
+    User_Board ||--o{ Board : "owns"
+    Board ||--o{ Board_Task : "contains"
+    Board_Task ||--o{ Task : "belongs to"
+    Task ||--|| Task_Link : "linked to"
+
 </div>
 <h2 id="dependances-maven">Dépendances Maven</h2>
 <h3 id="tomcat-api">Tomcat API</h3>

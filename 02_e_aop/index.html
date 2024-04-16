@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Architecture hexagonale - DocForm</title>
+    <title>A.O.P - DocForm</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Architecture hexagonale";
-        var mkdocs_page_input_path = "02_b_architecture_hexagonale.md";
+        var mkdocs_page_name = "A.O.P";
+        var mkdocs_page_input_path = "02_e_aop.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -53,13 +53,13 @@
     <ul class="current">
                 <li class="toctree-l4"><a class="reference internal" href="../02_a_initialisation/">Initialisation</a>
                 </li>
-                <li class="toctree-l4 current"><a class="reference internal current" href="./">Architecture hexagonale</a>
+                <li class="toctree-l4"><a class="reference internal" href="../02_b_architecture_hexagonale/">Architecture hexagonale</a>
                 </li>
                 <li class="toctree-l4"><a class="reference internal" href="../02_c_api_crud/">API Crud</a>
                 </li>
                 <li class="toctree-l4"><a class="reference internal" href="../02_d_repository/">Repository</a>
                 </li>
-                <li class="toctree-l4"><a class="reference internal" href="../02_e_aop/">A.O.P</a>
+                <li class="toctree-l4 current"><a class="reference internal current" href="./">A.O.P</a>
                 </li>
                 <li class="toctree-l4"><a class="reference internal" href="../02_f_logging/">Logging</a>
                 </li>
@@ -88,7 +88,7 @@
           <li class="breadcrumb-item">JAVA</li>
           <li class="breadcrumb-item">Conception de Framework</li>
           <li class="breadcrumb-item">Développement du projet</li>
-      <li class="breadcrumb-item active">Architecture hexagonale</li>
+      <li class="breadcrumb-item active">A.O.P</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -97,70 +97,81 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="architecture-monolithe-hexagonal">Architecture : Monolithe hexagonal</h1>
-<p><strong>Créez l'arborescence de package suivante pour votre application :</strong></p>
-<pre><code>/
-    board
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    user
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    task
-        application
-        domain
-            api
-            data
-            spi
-        infrastructure
-    gateway
-        configuration (package déjà existant à déplacer)
+                <h1 id="aspect-oriented-programming">Aspect Oriented Programming</h1>
+<h2 id="maven">Maven</h2>
+<p>Ajouter les dépendances suivantes dans votre <strong>'pom.xml'</strong> :</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.aspectj&lt;/groupId&gt;
+    &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;
+    &lt;version&gt;1.9.7&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.aspectj&lt;/groupId&gt;
+    &lt;artifactId&gt;aspectjrt&lt;/artifactId&gt;
+    &lt;version&gt;1.9.7&lt;/version&gt;
+&lt;/dependency&gt;
 </code></pre>
-<h2 id="domain-ports">Domain &amp; Ports</h2>
-<ul>
-<li>
-<p>Pour chaque ressource :</p>
-<ul>
-<li>Définissez les POJOs (objet domain) représentant les données définies en base (user, task et board) dans le package <strong>'data'</strong> du package <strong>'domain'</strong>.</li>
-<li>
-<p>Définissez dans le package <strong>'api'</strong> une interface <strong>'<nom_ressource>ServicePort'</strong> avec les signatures de méthode suivantes :</p>
-<p>```</p>
-<pre><code>Board add(final Board board);
-void delete(final String id);
-Board update(final Board board, final String id);
-List&lt;Board&gt; getAll();
-Board getById(final String id);
+<p>Ajouter le plugin :</p>
+<pre><code>    &lt;plugin&gt;
+        &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectj-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;${aspectj.plugin.version}&lt;/version&gt;
+        &lt;configuration&gt;
+            &lt;source&gt;${compiler.version}&lt;/source&gt;
+            &lt;target&gt;${compiler.version}&lt;/target&gt;
+            &lt;complianceLevel&gt;${compiler.version}&lt;/complianceLevel&gt;
+            &lt;showWeaveInfo&gt;true&lt;/showWeaveInfo&gt;
+            &lt;sources&gt;
+                &lt;source&gt;
+                    &lt;basedir&gt;src/main/java&lt;/basedir&gt;
+                    &lt;includes&gt;
+                        &lt;include&gt;utils/aspect/*.java&lt;/include&gt;
+                        &lt;include&gt;board/application/controller/*.java&lt;/include&gt;
+                        &lt;include&gt;user/application/controller/*.java&lt;/include&gt;
+                        &lt;include&gt;task/application/controller/*.java&lt;/include&gt;
+                        &lt;include&gt;board/infrastructure/dao/*.java&lt;/include&gt;
+                        &lt;include&gt;user/infrastructure/dao/*.java&lt;/include&gt;
+                        &lt;include&gt;task/infrastructure/dao/*.java&lt;/include&gt;
+                    &lt;/includes&gt;
+                &lt;/source&gt;
+            &lt;/sources&gt;
+        &lt;/configuration&gt;
+        &lt;dependencies&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.aspectj&lt;/groupId&gt;
+                &lt;artifactId&gt;aspectjtools&lt;/artifactId&gt;
+                &lt;version&gt;${aspectj.version}&lt;/version&gt;
+            &lt;/dependency&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.aspectj&lt;/groupId&gt;
+                &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;
+                &lt;version&gt;${aspectj.version}&lt;/version&gt;
+            &lt;/dependency&gt;
+        &lt;/dependencies&gt;
+        &lt;executions&gt;
+            &lt;execution&gt;
+                &lt;goals&gt;
+                    &lt;goal&gt;compile&lt;/goal&gt;
+                &lt;/goals&gt;
+            &lt;/execution&gt;
+        &lt;/executions&gt;
+    &lt;/plugin&gt;
 </code></pre>
-<p>```</p>
-</li>
-<li>
-<p>Définissez dans le package <strong>'spi'</strong> une interface <strong>'<nom_ressource>PersistencePort'</strong> avec les mêmes signatures de méthode.</p>
-</li>
-<li>
-<p>Définissez dans le package <strong>'api'</strong> l'implémentation <strong>'<nom_ressource>ServiceImpl'</strong> de votre interface du <strong>'service port'</strong>.</p>
+<h2 id="exception-handling">Exception Handling</h2>
 <ul>
-<li>Cette implémentation va utiliser le persistence port, qui sera passé en propriété de classe :</li>
+<li>Dans votre package <strong>'annotation'</strong>, créer une annotation <strong>'@HandleException'</strong> au RUNTIME et appliquable sur des méthodes.<ul>
+<li>Dans chaque controller de ressources, annotée la méthode <strong>dispatchAction</strong> avec cette nouvelle annotation.</li>
 </ul>
-<p>```</p>
-<pre><code>private final &lt;nom_ressource&gt;PersistencePort &lt;nom_ressource&gt;PersistencePort;
-
-public &lt;nom_ressource&gt;ServiceImpl(&lt;nom_ressource&gt;PersistencePort &lt;nom_ressource&gt;PersistencePort) {
-    this.&lt;nom_ressource&gt;PersistencePort = &lt;nom_ressource&gt;PersistencePort;
-}
-</code></pre>
-<p>```
-- L'implémentation des méthodes va donc appeler les méthodes correspondantes du persistence port, ex :</p>
-<p><code>public &lt;nom_ressource&gt; add(&lt;nom_ressource&gt; &lt;nom_ressource&gt;) {
-        return this.&lt;nom_ressource&gt;PersistencePort.add(&lt;nom_ressource&gt;);
-    }</code></p>
+</li>
+<li>Dans votre package <strong>'utils'</strong>, créer une classe <strong>'HandlingExceptionAspect'</strong>, on utilisera ici les annotations d'AspectJ afin de définir notre aspect, ses pointcuts et advices:<ul>
+<li>Annoter la classe avec <strong>@Aspect</strong></li>
+<li>Créer les méthodes vides annotées <strong>@Pointcut</strong> ciblant les méthodes <strong>'dispatchAction'</strong> de chaque controller de ressource.<ul>
+<li>Le pointcut doit cibler l'execution de la méthode <strong>dispatchAction</strong> et que celle-ci ait l'annotation <strong>@HandleException</strong>.</li>
+</ul>
+</li>
+<li>Créer les advices annotés <strong>'@AfterThrowing'</strong> pour capturer les exceptions remontées par la cible de votre pointcut passé en paramètre.<ul>
+<li>Dans le code de vos advices, récupérer l'argument du joinPoint correspondant à votre <strong>HttpServletResponse</strong>, afin de pouvoir selon l'exception remontée, mettre le HTTP status adapté.</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -169,8 +180,8 @@ public &lt;nom_ressource&gt;ServiceImpl(&lt;nom_ressource&gt;PersistencePort &lt
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../02_a_initialisation/" class="btn btn-neutral float-left" title="Initialisation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../02_c_api_crud/" class="btn btn-neutral float-right" title="API Crud">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../02_d_repository/" class="btn btn-neutral float-left" title="Repository"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../02_f_logging/" class="btn btn-neutral float-right" title="Logging">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -193,10 +204,10 @@ public &lt;nom_ressource&gt;ServiceImpl(&lt;nom_ressource&gt;PersistencePort &lt
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../02_a_initialisation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../02_d_repository/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../02_c_api_crud/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../02_f_logging/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
