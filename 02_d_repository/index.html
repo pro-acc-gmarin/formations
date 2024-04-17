@@ -148,11 +148,13 @@
     ```
 
     - On récupère la méthode courante :
+
     ```
     final Method currentMethod = enclosingClass.getDeclaredMethod(methodName);
     ```
 
     - On récupère l'annotation :
+
     ```
     final SQLQuery annotation = currentMethod.getAnnotation(SQLQuery.class);
     ```
@@ -163,7 +165,7 @@
         @PreparedQuery("DELETE FROM resource WHERE id = ?")
         public void delete(String id) {
             String currentMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-            final Method currentMethod = enclosingClass.getDeclaredMethod(methodName);
+            final Method currentMethod = this.getClass().getDeclaredMethod(methodName);
             final SQLQuery annotation = currentMethod.getAnnotation(SQLQuery.class);
             try (Connection connection = ConnectionPool.getInstance().getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(annotation.value(), Statement.RETURN_GENERATED_KEYS);
